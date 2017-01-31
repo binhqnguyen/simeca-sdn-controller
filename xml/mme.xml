@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	$Id$
+ 
+ 	Copyright (C) 2009 FhG Fokus
+ 	
+  This file is part of the Wharf project.
+
+ \file
+  
+  Wharf example configuration file 
+  
+ -->
+<Wharf>
+
+	<Core>
+		
+		<Debug log="3" memory="6" memory_status="1"/>
+			<!--  
+				The debug level should be set between -3 and 5, with 5 being the most verbose.
+				Only the logs with a level <= with the one below will be printed.
+				L_ALERT -3
+				L_CRIT  -2
+				L_ERR   -1
+				L_WARN   1
+				L_NOTICE 2
+				L_INFO   3
+				L_DB     4
+				L_DBG    5
+				L_MEM    6
+				
+				The memory is the setting for allt the memory operations.
+				
+				The memory_status controls what is printed on process exit and is either 0, 1 or 2:
+				 - 0 - don't show any memory status
+				 - 1 - show the summarized memory status
+				 - 2 - show the fragment maps and the summarized memory status
+			 -->		
+		
+		<SharedMemory kbytes="163840" />
+		<ProcessMemory kbytes="40960" />
+		
+		<WorkerPool count="4" queue_size="16" /> 
+		
+	</Core>
+	<Module binaryFile="modules/console/console.so" >
+		<![CDATA[
+	 		<WharfConsole>
+				<Prompt text=" MME >"/>
+				<Acceptor type="udp" port="10000" bind="192.168.254.80" />
+				<Acceptor type="tcp" port="10000" bind="192.168.254.80" />
+			</WharfConsole>
+		]]>
+	</Module>	
+	<Module binaryFile="modules/cdp/cdp.so">	
+		<![CDATA[	
+                <DiameterPeer 
+				FQDN="mme.epc.mnc001.mcc001.3gppnetwork.org"
+				Realm="epc.mnc001.mcc001.3gppnetwork.org"
+				Vendor_Id="10415"
+				Product_Name="CDiameterPeer"
+				AcceptUnknownPeers="1"
+				DropUnknownOnDisconnect="1"
+				Tc="30"
+				Workers="4"
+				QueueLength="32"
+				TransactionTimeout="5"
+				SessionsHashSize="128"
+			>
+				<Peer FQDN="hss.epc.mnc001.mcc001.3gppnetwork.org" Realm="epc.mnc001.mcc001.3gppnetwork.org" port="3868"/>
+			
+				<Acceptor port="3868" bind="192.168.254.80"/>
+				
+				<Auth id="16777251" vendor="10415"/><!-- 3GPP S6a/S6d -->
+				<Auth id="16777266" />
+				
+				<Realm name="epc.mnc001.mcc001.3gppnetwork.org">
+					<Route FQDN="hss.epc.mnc001.mcc001.3gppnetwork.org" metric="10"/>
+				</Realm>
+
+				<DefaultRoute FQDN="hss.epc.mnc001.mcc001.3gppnetwork.org" realm="hss.epc.mnc001.mcc001.3gppnetwork.org"/>
+				
+			</DiameterPeer>
+		]]>
+	</Module>
+	<Module binaryFile="modules/cdp_avp/cdp_avp.so"/>
+	<Module binaryFile="modules/mysql/mysql.so"/>  
+	<Module binaryFile="modules/Client_S6ad/Client_S6ad.so">
+		<![CDATA[
+			<WharfClient_S6ad>
+				<Host fqdn="mme.epc.mnc001.mcc001.3gppnetwork.org" realm="epc.mnc001.mcc001.3gppnetwork.org"/>
+				<Destination fqdn="hss.epc.mnc001.mcc001.3gppnetwork.org" realm="epc.mnc001.mcc001.3gppnetwork.org"/>
+			</WharfClient_S6ad>
+		]]>
+	</Module>
+  	<Module binaryFile="modules/addressing/addressing.so" >
+		<![CDATA[
+			<WharfAddressingWRR>
+				<Default>
+					<Address ip="192.168.4.20" weight="1" />
+				</Default>
+			</WharfAddressingWRR>
+		]]>
+	</Module>
+	<Module binaryFile="modules/sctp/sctp.so"/>
+	<Module binaryFile="modules/S1AP/s1ap.so">
+		<![CDATA[
+			<WharfS1AP>
+				<Local addr="192.168.4.80" port="36412" />
+			</WharfS1AP>
+		]]>
+	</Module>
+	<Module binaryFile="modules/nas/nas.so"/>
+	<Module binaryFile="modules/mme/mme.so">
+		<![CDATA[
+			<WharfMME
+				s11_mme="192.168.4.80"
+				s6a_mme="192.168.254.80"
+				s1ap_mme="192.168.4.80"
+				hash_size="24"
+				relative_capacity="255"
+				pco_primary_dns="8.8.8.8"
+                pco_secondary_dns="8.8.4.4"
+                sdn_dispatcher="127.0.0.1"
+                p2p_info_file="/proj/PhantomNet/binh/openepc/code/script/iot-controller-no-tunel/P2P_ATTACH.data" >
+				<!-- GUMMEI element contains the configuration of the MME identity. The element is mandatory. The attributes mcc, mnc, mmegi (MME Group ID) 
+					and mmec (MME Code) are mandatory. The attribute mme_name is optional. -->
+				<GUMMEI
+					mcc="1"
+					mnc="1"
+					mmegi="123"
+					mmec="45"
+					mme_name="MME_1.OpenEPC" />
+				<!-- The Security element is optional. It defines the encryption and integrity algorithms to be used for NAS security. The attributes are all
+					optional. If any of them is not present, it will default to the values EIA1_128 for integrity and EEA0 for security. -->
+				<Security
+					eea_primary="0"
+					eia_primary="1"
+					eea_secondary="0"
+					eia_secondary="1"/>
+				<!-- Database configuration. The element is optional. If it is not present, the module will not push the state to the database. 
+					All the attributes are mandatory if the element is present. -->
+				<Database 
+					hostname="127.0.0.1"
+					database="mme_db"
+					username="mme"
+					password="mme"/>
+				<TA mcc="1" mnc="1" tac="02" mme_gid="23" mme_code="21"  mme="192.168.4.87"/>
+				<RA mcc="1" mnc="1" rac="18" sgsn="192.168.4.120" />
+			</WharfMME>
+		]]>
+	</Module>
+	<Module binaryFile="modules/gtp/gtp.so">
+		<![CDATA[
+			<GTP>
+			  <Acceptor id="GTP-C" type="udp" port="2123" bind="192.168.4.80" />
+			</GTP>
+		]]>
+	</Module>
+</Wharf>

@@ -1,0 +1,44 @@
+SCRIPTS:
+= demo_init.sh: initialize ovs and switches. Also start the SDN controller (MC.py)
+= demo_restart.sh: restart mme, enbs, client, flush entries, and start the MC.py. The OAI eNodeB needs to be run manually.
+
+STEPS:
+= Need to change Nexus5's IMSI in demo_init.sh script. Nexus5's IMSI = 001011234560<PhantomNet UE'ID - 1>. Eg, UE4 --> IMSI=001011234560303
+= Then demo_init.sh.
+
+
+Opened windows:
+    - Window 1: alice, penb1 (Nexus 5), penb2, sgw (MC), sgw (MF), epc (HSS)
+    - Window 2: enb1, enb2 (for HO).
+    - Wireshark on sgw running.
+
+1. Start OVS switches, eNBs, MF, MC: ./demo_init.sh
+2. Demo steps:
+
+    - Demo 1: Attach Nexus 5: in penb1
+        /usr/local/src/airinterface/openairinterface5g/SCRIPTS/run_lte_softmodem.sh
+      Ping server: 
+        adb shell
+        ping 192.168.7.10
+    - Demo 2: Attach Alice: in Alice:
+        mm.connect_l3 LTE
+      Nexus 5 pings Alice.
+        adb shell
+        ping <Alice's IP>
+    - Demo 3: Alice S1HO:
+        Nexus 5 pings Alice.
+
+        in eNB2/3: 
+		1. enb3—>enb2: enodeb.utah_intra_lte_handover 001011234567890 01 4568 192.168.3.31
+    		2. enb2—>enb3: enodeb.utah_intra_lte_handover 001011234567890 01 4569 192.168.3.32
+
+    
+        <Continous ping flow>       
+
+3. Trouble shooting:
+    a. Attach reject after attach request Nexus 5:
+        Solution: In EPC node,
+            /proj/PhantomNet/binh/openepc/code/script/multiple_UEs/load_1_client.sh 001011234567899 491234567899 400
+            Flush mme.
+            Reconnect Nexus 5.
+    

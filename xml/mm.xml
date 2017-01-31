@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	$Id: pcrf.xml 2302 2010-08-25 12:59:28Z dvi $
+ 
+ 	Copyright (C) 2009 FhG Fokus
+ 	
+  This file is part of the Wharf project.
+
+ \file
+  
+  Wharf configuration file for the Mobility Manager (MM)
+  
+ -->
+<Wharf>
+	<Core>
+		<Debug log="3" memory="6" memory_status="1"/>
+			<!--  
+				The debug level should be set between -3 and 5, with 5 being the most verbose.
+				Only the logs with a level <= with the one below will be printed.
+				L_ALERT -3
+				L_CRIT  -2
+				L_ERR   -1
+				L_WARN   1
+				L_NOTICE 2
+				L_INFO   3
+				L_DB     4
+				L_DBG    5
+				L_MEM    6
+				
+				The memory is the setting for all the memory operations.
+				
+				The memory_status controls what is printed on process exit and is either 0, 1 or 2:
+				 - 0 - don't show any memory status
+				 - 1 - show the summarized memory status
+				 - 2 - show the fragment maps and the summarized memory status
+			 -->	
+		<SharedMemory kbytes="8192" />
+		<ProcessMemory kbytes="2048" />
+		<WorkerPool count="6" queue_size="24" /> 		
+	</Core>
+
+	<Module binaryFile="modules/console/console.so" >
+		<![CDATA[
+		<WharfConsole>
+			<Prompt text="Client Alice>"/>
+			<Acceptor type="tcp" port="10000" bind="192.168.254.100" />
+			<Acceptor type="udp" port="10000" bind="127.0.0.1" />
+			</WharfConsole>
+		]]>
+	</Module>
+	<Module binaryFile="modules/mm_eth/mm_eth.so" >
+		<![CDATA[
+		<MM_ETH	link_check_interval="3" >
+			<Interface id="LTE" name="net_c" />
+		</MM_ETH>
+		]]>
+	</Module>
+	<Module binaryFile="modules/mm_ip/mm_ip.so" >
+		<![CDATA[
+		<MM_IP>
+			<EHCP 
+				delay="2000" 
+				retries="1" /> 
+			<DHCP 
+				delay="2000" 
+				retries="1" /> 
+		</MM_IP>
+		]]>
+	</Module>
+	<Module binaryFile="modules/mm_andsf/mm_andsf.so" >
+		<![CDATA[
+		<MM_ANDSF>
+			<ANDSF
+				url="tcp://192.168.1.31:10000"
+				timeout="5"
+				/>
+			<UE
+				subscription_type="1"
+				subscription_id="001011234567890"
+				alert_port="10005"
+			/>
+
+		</MM_ANDSF>
+		]]>
+	</Module>
+	<Module binaryFile="modules/ehcp_messaging/ehcp_messaging.so" />
+	<Module binaryFile="modules/mm_gui_comm/mm_gui_comm.so" />
+	<Module binaryFile="modules/mm/mm.so" >			
+		<![CDATA[
+		<MM>
+			<NetworkList
+				file="/opt/OpenEPC/etc/mm_network.xml"
+				refresh_interval="10"	/>
+			<Client imsi="001011234567890"	/>
+		</MM>
+		]]>
+	</Module>
+</Wharf>
+

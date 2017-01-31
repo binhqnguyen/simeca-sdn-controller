@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	$Id$
+ 
+ 	Copyright (C) 2010 FhG Fokus
+ 	
+  This file is part of the Wharf project.
+
+-->
+
+<Wharf>
+
+	<Core>
+		
+		<Debug log="3" memory="6" memory_status="1"/>
+			<!--  
+				The debug level should be set between -3 and 5, with 5 being the most verbose.
+				Only the logs with a level <= with the one below will be printed.
+				L_ALERT -3
+				L_CRIT  -2
+				L_ERR   -1
+				L_WARN   1
+				L_NOTICE 2
+				L_INFO   3
+				L_DB     4
+				L_DBG    5
+				L_MEM    6
+				
+				The memory is the setting for allt the memory operations.
+				
+				The memory_status controls what is printed on process exit and is either 0, 1 or 2:
+				 - 0 - don't show any memory status
+				 - 1 - show the summarized memory status
+				 - 2 - show the fragment maps and the summarized memory status
+			 -->		
+		
+		<SharedMemory kbytes="163840" />
+		<ProcessMemory kbytes="40960" />
+		
+		<WorkerPool count="4" queue_size="16" /> 
+		
+	</Core>
+	<Module binaryFile="modules/console/console.so" >
+		<![CDATA[
+	 		<WharfConsole>
+				<Prompt text=" eNodeB >"/>
+				<Acceptor type="udp" port="10000" bind="MGN" />
+				<Acceptor type="tcp" port="10000" bind="MGN" />
+			</WharfConsole>
+		]]>
+	</Module>
+	<Module binaryFile="modules/ehcp_messaging/ehcp_messaging.so" />
+	<Module binaryFile="modules/ehcp_daemon/ehcp_daemon.so">
+		<![CDATA[
+			<WharfEHCP_Daemon		
+			    device="NET_C"
+			    domain="epc.mnc001.mcc001.3gppnetwork.org"
+			    >
+			    <DHCP     
+			    	local="NET_C_IP"
+			    	gateway="NET_C_IP"
+			    	netmask="32"
+			    	dns="192.168.1.40" />
+			    <EHCP     
+			    	local="FC00:1234:3::30"
+			    	gateway="FC00:1234:3::30"
+			    	netmask=""
+			    	dns="FC00:1234:1::40" />
+                            <Database
+	                        hostname="localhost"
+	                        database="ehcp_daemon_db"
+	                        username="ehcp_daemon"
+	                        password="ehcp_daemon" />
+			</WharfEHCP_Daemon>
+		]]>
+	</Module>
+
+	<Module binaryFile="modules/gtp/gtp.so">
+		<![CDATA[
+			<GTP>
+			  <Acceptor id="GTP-U" type="udp" port="2123" bind="NET_D_IP" />
+			</GTP>
+		]]>
+	</Module>
+	<Module binaryFile="modules/mysql/mysql.so"/>
+	<Module binaryFile="modules/addressing/addressing.so" >
+		<![CDATA[
+			<WharfAddressingWRR>
+				<Default>
+					<Address ip="192.168.4.80" weight="1" />
+				</Default>
+			</WharfAddressingWRR>
+		]]>
+	</Module>
+	<Module binaryFile="modules/sctp/sctp.so"/>
+	<Module binaryFile="modules/S1AP/s1ap.so">
+		<![CDATA[
+			<WharfS1AP>
+				<Local addr="NET_D_IP" port="36412" />
+			</WharfS1AP>
+		]]>
+	</Module>
+	<Module binaryFile="modules/nas/nas.so"/>
+	<Module binaryFile="modules/routing_gtpu/routing_gtpu.so" />	
+	<Module binaryFile="modules/routing_raw/routing_raw.so" />
+	<Module binaryFile="modules/routing/routing.so" >
+		<![CDATA[
+			<WharfROUTING>
+			<Extension
+				id="1"
+				dst_table="ip"
+				mod_name="routing_raw"
+				interface="NET_D"
+				ipv4="NET_D_IP"
+				ipv6="FC00:1234:3::30" />
+			<Extension
+				id="2"
+				src_table="ip"
+				mod_name="routing_raw"
+				interface="NET_C"
+				ipv4="192.168.4.20"
+				ipv6="FC00:1234:3::30"/>
+			</WharfROUTING>
+		]]>
+	</Module>
+	
+	<Module binaryFile="modules/enodeb/enodeb.so" >
+		<![CDATA[
+			<WharfEnodeb s1_u="NET_D_IP" default_apn="default" mnc="1" mcc="1" tac="01" cellid="CELLID">
+				<Database
+					hostname="localhost"
+					username="enodeb"
+					password="enodeb"
+					database="enodeb_db" />
+			</WharfEnodeb>
+		]]>
+	</Module>
+	
+	<Module binaryFile="modules/X2AP/x2ap.so">
+		<![CDATA[
+			 <x2ap>
+				<sctp_ep local_ip="NET_D_IP" local_port="36422"/>
+<sctp_association id="1" remote_ip="192.168.4.90" remote_port="36422"/>
+<sctp_association id="2" remote_ip="192.168.4.92" remote_port="36422"/>
+<sctp_association id="3" remote_ip="192.168.4.93" remote_port="36422"/>
+<sctp_association id="4" remote_ip="192.168.4.94" remote_port="36422"/>
+			 </x2ap>
+		]]>
+	</Module>
+	
+	
+</Wharf>

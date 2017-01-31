@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NetworkList>
+<Network id="LTE" type="ETH" tunnel_type="NONE" attachment_type="EHCP"/>
+</NetworkList>
