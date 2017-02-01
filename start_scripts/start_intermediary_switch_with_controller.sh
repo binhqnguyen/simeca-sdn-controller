@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../simeca_constanst.sh
+source ../simeca_constants.sh
 
 if [ $# -lt 1 ]; then
     echo "Usage <controller's ip, eg, 192.168.10.1>"
