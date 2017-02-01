@@ -1,4 +1,5 @@
 #!/bin/bash
+source ../simeca_constanst.sh
 
 if [ $# -lt 1 ]; then
     echo "Usage <controller's ip, eg, 192.168.10.1>"
@@ -7,7 +8,7 @@ fi
 
 
 controller_ip=$1
-sudo /usr/local/src/simeca/run_ovs.sh || {
+sudo $START_SCRIPTS/run_ovs.sh || {
 	echo "Can't run OVS. Exit!"
 	exit 1
 }
@@ -15,7 +16,7 @@ sudo /usr/local/src/simeca/run_ovs.sh || {
 
 ovs-vsctl del-br br0
 
-get_interface="perl /usr/local/src/simeca/get_interface_map.pl"
+get_interface="perl $START_SCRIPTS/get_interface_map.pl"
 interface_number=$($get_interface | grep -v mgmt | wc -l)
 echo $interface_number
 interfaces=()
