@@ -122,7 +122,7 @@
 				pco_primary_dns="8.8.8.8"
                 pco_secondary_dns="8.8.4.4"
                 sdn_dispatcher="127.0.0.1"
-                p2p_info_file="/proj/PhantomNet/binh/openepc/code/script/iot-controller-no-tunel/P2P_ATTACH.data" >
+                p2p_info_file="/usr/local/src/simeca/CONF/P2P_ATTACH.data" >
 				<!-- GUMMEI element contains the configuration of the MME identity. The element is mandatory. The attributes mcc, mnc, mmegi (MME Group ID) 
 					and mmec (MME Code) are mandatory. The attribute mme_name is optional. -->
 				<GUMMEI
