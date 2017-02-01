@@ -65,7 +65,8 @@ supported_ofctl = {
 
 
 class RestIoTApi(app_manager.RyuApp):
-    _SCRIPTS = "/usr/local/src/simeca/script"
+    _SCRIPTS = "/usr/local/src/simeca"
+    DATA="/usr/local/src/simeca/data"
     _CONF = "/usr/local/src/simeca/CONF"
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION,
                     ofproto_v1_2.OFP_VERSION,
@@ -198,9 +199,9 @@ class RestIoTApi(app_manager.RyuApp):
         #Dispatcher.attached_ue_ip = open('../iot-controller-eval/e2e_delay_exp/ATTACHED_IP.data','w',0)
         #Dispatcher.p2p_existed_ip = open('../iot-controller-eval/e2e_delay_exp/P2P_IP.data','w',0)
         
-        Dispatcher.get_imsi_server_name_map('%s/multiple_UEs/IMSI_1.data' % (self._SCRIPTS))
-        Dispatcher.get_imsi_server_name_map('%s/multiple_UEs/IMSI_2.data' % (self._SCRIPTS))
-        Dispatcher.get_imsi_server_name_map('%s/multiple_UEs/IMSI_3.data' % (self._SCRIPTS))
+        Dispatcher.get_imsi_server_name_map('%s/IMSI_1.data' % (self.DATA))
+        Dispatcher.get_imsi_server_name_map('%s/IMSI_2.data' % (self.DATA))
+        Dispatcher.get_imsi_server_name_map('%s/IMSI_3.data' % (self.DATA))
 	LOG.debug("Got ims_server_name map")
 
         Dispatcher.imsi_to_ue_ip = {}

@@ -43,6 +43,7 @@ LOG.setLevel(logging.INFO)
 ENABLE_OVS_GTP = 0
 
 class LocationRouting:
+    XML="/usr/local/src/simeca/xml"
     switch_server_port = {}
     access_switches = {}
     switchname_to_dpid = {}
@@ -519,7 +520,7 @@ class LocationRouting:
     def createNetworkGraph(self, **kwargs):
         self.G=nx.DiGraph()
         #print "adding switches and hosts"
-        tree = ET.parse('input.xml') #hardcoding file name for now
+        tree = ET.parse('%s/input.xml'% self.XML) #hardcoding file name for now
         xmlroot = tree.getroot()
 
         for child in xmlroot.findall('switch'):

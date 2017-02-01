@@ -6,6 +6,7 @@ SQL="$E_PATH/load_clients.sql"
 CLEAN_SQL="$E_PATH/clear_db.sql"
 USER_DATA="$SIMECA_PATH/data/user.dat"
 
+sudo mkdir -p $SIMECA_PATH/data
 if [ $# -lt 2 ]; then
     echo "Usage: <Starting ID> <Number of IMSI entries>"
     exit 1
@@ -33,4 +34,4 @@ done
 #python $SCRIPTS/iot-controller-eval/e2e_delay_exp/generate_p2p_path.py
 #cp $SCRIPTS/iot-controller-eval/P2P.data $SCRIPTS/iot-controller/
 
-echo "Done! inserted $2 IMSIs to database. Added IMSIs to the offload database $SCRIPTS/iot-controller-eval/user.dat"
+echo "Done! inserted $2 IMSIs to database. Added IMSIs to the offload database $USER_DATA"

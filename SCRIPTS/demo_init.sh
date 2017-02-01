@@ -25,6 +25,10 @@ echo "==========Starting eNBs and MF .... ============"
 cd $EPC
 bash $EPC/restart_epc.sh
 
+echo "==========Copying IMSI data into $DATA ==========="
+scp -o StrictHostKeyChecking=no 'epc.$domain:/tmp/IMSI_*' /tmp/
+sudo cp /tmp/IMSI_* $DATA/
+
 echo "==========Starting MC .... ============"
 cd $MC_PATH
 sudo pip install MySQL-python

@@ -40,10 +40,11 @@ sudo sed -i "s/CELLID/$cellid/g" /opt/OpenEPC/etc/enodeb-ip.xml
 sudo sed -i "s/eNodeB/$enb_name/g" /opt/OpenEPC/etc/enodeb-ip.xml
 sudo sed -i "s/MGN/$mgn/g" /opt/OpenEPC/etc/enodeb-ip.xml
 
-
+sudo cp /opt/OpenEPC/etc/enodeb.xml /opt/OpenEPC/etc/enodeb.bk.xml
+sudo cp /opt/OpenEPC/etc/enodeb-ip.xml /opt/OpenEPC/etc/enodeb.xml
 cd $SIMECA_EPC/wharf_rel5
 
-screen -S enode -L -d -m -h 10000 /bin/bash -c "./wharf -f /opt/OpenEPC/etc/enodeb-ip.xml"
+screen -S enodeb -L -d -m -h 10000 /bin/bash -c "./wharf -f /opt/OpenEPC/etc/enodeb.xml"
 screen -wipe
 
 
