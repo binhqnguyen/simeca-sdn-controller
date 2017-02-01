@@ -56,7 +56,7 @@ ENABLE_OVS_GTP = 0
 
 
 class SMORE_controller(app_manager.RyuApp):
-    _SCRIPTS = "/usr/local/src/simeca_scripts"
+    _SCRIPTS = "/usr/local/src/simeca/start_scripts"
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
     #OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
     _LISTEN_INF = "eth2" #Todo: should be SGW's net_d interface

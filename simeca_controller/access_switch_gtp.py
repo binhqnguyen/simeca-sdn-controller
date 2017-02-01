@@ -38,7 +38,7 @@ import os
 
 class AccessSwitchGtp:
   ##constants
-  _SCRIPTS="/usr/local/src/simeca_scripts"
+  _SCRIPTS="/usr/local/src/simeca/start_scripts"
   _debug = 0
 
   _OVS_OFCTL = "ovs-ofctl"
@@ -89,7 +89,7 @@ class AccessSwitchGtp:
         enb_ulr = "enb%s.%s" % (index,domain_name)
         if index=="1":
             enb_ulr = "penb1.%s" % (domain_name)
-        physical_logical_inf_map = subprocess.check_output(['ssh %s "cd %s && ./get_interface_map.pl"'% (enb_ulr, self._SCRIPTS)], shell=True)
+        physical_logical_inf_map = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && ./get_interface_map.pl"'% (enb_ulr, self._SCRIPTS)], shell=True)
         enb_mac = ":".join(re.findall(r'.{1,2}',re.search(r"net-d-enb" + str(index) + r" -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(3)))
         self.access_switches[a]['enb_mac'] = enb_mac
 
