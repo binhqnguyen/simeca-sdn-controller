@@ -6,5 +6,5 @@ source ../simeca_constants.sh
 for i in $HOSTS
 do
 	echo "Replacing hostname of host $i"
-	ssh -o StrictHostKeyChecking=no $i.$domain -t -t "sudo /usr/local/src/simeca/SCRIPTS/replace_host_local.sh"
+	ssh -o StrictHostKeyChecking=no $i.$domain "/usr/local/src/simeca/SCRIPTS/replace_host_local.sh"
 done
