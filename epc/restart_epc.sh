@@ -31,10 +31,10 @@ ssh -o StrictHostKeyChecking=no client1.$domain -t -t "cd $EPC; sudo $EPC/start_
 
 
 #Restart OAI enodeb
-ssh -o StrictHostKeyChecking=no penb1.$domain "sudo $EPC/penb.kill.sh; /usr/local/src/airinterface/openairinterface5g/SCRIPTS/run_lte_soft_modem.sh" || {
-    echo "Could not restart OAI eNodeB!"
-    exit 1
-}
+#ssh -o StrictHostKeyChecking=no penb1.$domain "sudo $EPC/penb.kill.sh; /usr/local/src/airinterface/openairinterface5g/SCRIPTS/run_lte_soft_modem.sh" || {
+#    echo "Could not restart OAI eNodeB!"
+#    exit 1
+#}
 
 exit 0
 

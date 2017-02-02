@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############MODIFY THIS FIRST!##################
-UE_ID="312" #UE13
+UE_ID="311" #UE12
 ###################################################
 
 
@@ -20,3 +20,4 @@ HSS_PROVISION="$SIMECA_PATH/hss_provision"
 EPC="$SIMECA_PATH/epc"
 XML="$SIMECA_PATH/xml"
 DATA="$SIMECA_PATH/data"
+HOSTS="client1 enb2 enb3 epc access1 access2 access3 tor hsw1 server1"

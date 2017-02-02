@@ -1,6 +1,14 @@
 #!/bin/bash
 
 source ../simeca_constants.sh
+
+#Replace hostname
+sudo ./replace_hostname.sh
+
+
+#Clean up ip route
+sudo ./set_ip.sh
+
 #
 #Start components for ATT-demo.
 #Run this on MF (MME) node.
