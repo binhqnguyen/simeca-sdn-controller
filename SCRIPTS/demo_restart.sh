@@ -8,8 +8,8 @@ source ../simeca_constants.sh
 
 
 echo "==========Starting eNBs and MF .... ============"
-cd $SIMECA_PATH
-bash $SIMECA_PATH/restart_epc.sh
+cd $EPC
+bash $EPC/restart_epc.sh
 
 echo "==========Starting MC .... ============"
 cd $MC_PATH

@@ -42,7 +42,7 @@ sudo sed -i "s/MGN/$mgn/g" /opt/OpenEPC/etc/enodeb-ip.xml
 
 sudo cp /opt/OpenEPC/etc/enodeb.xml /opt/OpenEPC/etc/enodeb.bk.xml
 sudo cp /opt/OpenEPC/etc/enodeb-ip.xml /opt/OpenEPC/etc/enodeb.xml
-cd $SIMECA_EPC/wharf_rel5
+cd $SIMECA_EPC/wharf
 
 screen -S enodeb -L -d -m -h 10000 /bin/bash -c "./wharf -f /opt/OpenEPC/etc/enodeb.xml"
 screen -wipe

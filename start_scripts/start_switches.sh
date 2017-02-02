@@ -25,7 +25,7 @@ sudo apt-get install tshark
 for a in "${access_switch_list[@]}"
 do
     echo "Starting switch $a.$domain, Controller IP = $controller_ip"
-    ssh $a.$domain "cd $START_SCRIPTS && sudo ./start_access_switch_with_controller.sh $controller_ip" || {
+    ssh -o StrictHostKeyChecking=no $a.$domain "cd $START_SCRIPTS && sudo ./start_access_switch_with_controller.sh $controller_ip" || {
         echo "Could not start Access switch $a!"
         exit 1
     }
@@ -34,7 +34,7 @@ done
 for s in "${intermediary_switch_list[@]}"
 do
     echo "Starting switch $s.$domain, Controller IP = $controller_ip"
-    ssh $s.$domain "cd $START_SCRIPTS && sudo ./start_intermediary_switch_with_controller.sh $controller_ip" || {
+    ssh -o StrictHostKeyChecking=no $s.$domain "cd $START_SCRIPTS && sudo ./start_intermediary_switch_with_controller.sh $controller_ip" || {
         echo "Could not start Intermediary switch $s!"
         exit 1
     }

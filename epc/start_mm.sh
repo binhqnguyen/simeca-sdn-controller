@@ -41,7 +41,7 @@ sudo sed -i "s/001011234567890/$imsi/g" /opt/OpenEPC/etc/mm.xml
 sudo sed -i "s/Alice/$c_name/g" /opt/OpenEPC/etc/mm.xml
 
 
-cd $SIMECA_EPC/wharf_rel5
+cd $SIMECA_EPC/wharf
 
 screen -S mm -L -d -m -h 10000 /bin/bash -c "./wharf -f /opt/OpenEPC/etc/mm.xml"
 screen -wipe

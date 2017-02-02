@@ -167,7 +167,7 @@ class Dispatcher(ControllerBase):
       enb_num = enb_name[3:4]
       #if int(enb_num) > 2:
       #    enb_num = '2'
-      physical_logical_inf_map = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && ./get_interface_map.pl"' % (self._SCRIPTS, enb_ulr)], shell=True)
+      physical_logical_inf_map = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && ./get_interface_map.pl"' % (enb_ulr,self._SCRIPTS)], shell=True)
       an_lte_inf = re.search(r"an-lte"+enb_num+r" -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(1)
       
       #print "_set_default_route_enb %s, ue_prefix %s, an_lte interface %s" % ( enb_cellid, ue_prefix, an_lte_inf)
@@ -184,7 +184,7 @@ class Dispatcher(ControllerBase):
       enb_num = enb_name[3:4]
       #if int(enb_num) > 2:
       #    enb_num = '2'
-      physical_logical_inf_map = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && ./get_interface_map.pl"' % (self._SCRIPTS, enb_ulr)], shell=True)
+      physical_logical_inf_map = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && ./get_interface_map.pl"' % (enb_ulr, self._SCRIPTS)], shell=True)
       LOG.debug("%s\n%s\n%s\n%s" % (enb_cellid, enb_name, enb_ulr, physical_logical_inf_map))
       an_lte_inf = re.search(r"an-lte(.*) -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(2)
       
@@ -230,7 +230,7 @@ class Dispatcher(ControllerBase):
                 server_ip = Dispatcher.servers[server]['ip']
                 t = server_ip.split('.')
                 server_subnet = "%s.%s.%s.0/24" % (t[0], t[1], t[2])
-                net_d_enb_str = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "%s/get_interface_map.pl | grep net-d-enb"' % (self._SCRIPTS, enb_ulr)], shell=True)
+                net_d_enb_str = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "%s/get_interface_map.pl | grep net-d-enb"' % (enb_ulr, self._SCRIPTS)], shell=True)
                 net_d_enb = net_d_enb_str.split('->')[1]
                 LOG.debug("Setting ip route for server %s on enb %s dev %s" % (server_subnet,enb_ulr, net_d_enb))
                 ssh_p = subprocess.Popen(["ssh", enb_ulr, "sudo ip route add %s dev %s" % (server_subnet, net_d_enb)], stdout=subprocess.PIPE)

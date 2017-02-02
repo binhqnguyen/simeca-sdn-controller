@@ -113,8 +113,8 @@ class RestIoTApi(app_manager.RyuApp):
         '''
         Set up multiple P2P flows between ue_ip and a number of destination UEs.
         '''
-        #uri = path + '/attach/p2p_multiple'
-        uri = path + '/attach/p2p'
+        uri = path + '/attach/p2p_multiple'
+        #uri = path + '/attach/p2p'
         mapper.connect('iot', uri,
                        controller=Dispatcher, action='installP2PFlowsUEs',
                        conditions=dict(method=['POST']))

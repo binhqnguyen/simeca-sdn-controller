@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source ../simeca_constants.sh
 #
@@ -14,11 +14,17 @@ ssh -o StrictHostKeyChecking=no epc.$domain -t -t "cd $HSS_PROVISION && sudo ./l
 ssh -o StrictHostKeyChecking=no epc.$domain -t -t "cd $HSS_PROVISION && sudo ./load_1_client.sh 001011234567899 491234567899 100"
 ssh -o StrictHostKeyChecking=no epc.$domain -t -t "cd $HSS_PROVISION && sudo ./load_1_client.sh $NEXUS_IMSI $NEXUS_MISDN 200"
 
-sudo bash -c 'echo "001011234567890|$NEXUS_IMSI" > $CONF_PATH/P2P_ATTACH.data' #for P2P HO
-sudo bash -c 'echo "1,001011234567899,192.168.7.10" > $CONF_PATH/SERVER.data'
-sudo bash -c 'echo "2,001011234567890,192.168.7.10" >> $CONF_PATH/SERVER.data'
-sudo bash -c 'echo "3,001011234567891,192.168.7.10" >> $CONF_PATH/SERVER.data'
-sudo bash -c 'echo "4,$NEXUS_IMSI,192.168.7.10" >> $CONF_PATH/SERVER.data'
+echo $CONF_PATH/P2P_ATTACH.data
+
+echo "001011234567890|$NEXUS_IMSI" > /tmp/P2P_ATTACH.data #for P2P HO
+echo "1,001011234567899,192.168.7.10" > /tmp/SERVER.data
+echo "2,001011234567890,192.168.7.10" >> /tmp/SERVER.data
+echo "3,001011234567891,192.168.7.10" >> /tmp/SERVER.data
+echo "4,$NEXUS_IMSI,192.168.7.10" >> /tmp/SERVER.data
+
+
+sudo cp /tmp/P2P_ATTACH.data  $CONF_PATH/P2P_ATTACH.data #for P2P HO
+sudo cp /tmp/SERVER.data  $CONF_PATH/SERVER.data
 
 
 echo "==========Starting eNBs and MF .... ============"
@@ -26,7 +32,7 @@ cd $EPC
 bash $EPC/restart_epc.sh
 
 echo "==========Copying IMSI data into $DATA ==========="
-scp -o StrictHostKeyChecking=no 'epc.$domain:/tmp/IMSI_*' /tmp/
+scp -o StrictHostKeyChecking=no "epc.$domain:/tmp/IMSI_*" /tmp/
 sudo cp /tmp/IMSI_* $DATA/
 
 echo "==========Starting MC .... ============"
