@@ -8,3 +8,5 @@ done
 
 cd /usr/local/src/simeca/SCRIPTS
 sudo ./set_ip_mme.sh
+
+touch /tmp/SETIP

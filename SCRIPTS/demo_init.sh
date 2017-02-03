@@ -3,11 +3,17 @@
 source ../simeca_constants.sh
 
 #Replace hostname
-sudo ./replace_hostname.sh
+if [ ! -f /tmp/HOST_REPLACED ]; then
+	./replace_hostname.sh
+fi
 
 
 #Clean up ip route
-sudo ./set_ip.sh
+if [ ! -f /tmp/SETIP ]; then
+	./set_ip.sh
+fi
+
+
 
 #
 #Start components for ATT-demo.

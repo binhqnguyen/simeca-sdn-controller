@@ -8,3 +8,5 @@ do
 	echo "Replacing hostname of host $i"
 	ssh -o StrictHostKeyChecking=no $i.$domain "/usr/local/src/simeca/SCRIPTS/replace_host_local.sh"
 done
+
+touch /tmp/HOST_REPLACED
