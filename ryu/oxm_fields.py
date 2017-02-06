@@ -88,6 +88,7 @@ class UnknownType(TypeDescr):
 
 
 OFPXMC_OPENFLOW_BASIC = 0x8000
+OFPXMC_NXM_1 = 0x0001
 OFPXMC_EXPERIMENTER = 0xffff
 
 
@@ -97,7 +98,6 @@ class _OxmClass(object):
         self.oxm_type = num | (self._class << 7)
         self.type = type_
 
-
 class OpenFlowBasic(_OxmClass):
     _class = OFPXMC_OPENFLOW_BASIC
 
@@ -105,6 +105,19 @@ class OpenFlowBasic(_OxmClass):
         super(OpenFlowBasic, self).__init__(name, num, type_)
         self.num = self.oxm_type
 
+class NXM_1(_OxmClass):
+    _class = OFPXMC_NXM_1 
+
+    def __init__(self, name, num, type_):
+        super(NXM_1, self).__init__(name, num, type_)
+        self.num = self.oxm_type
+
+class FlowBasic(_OxmClass):
+    _class = OFPXMC_OPENFLOW_BASIC
+
+    def __init__(self, name, num, type_):
+        super(OpenFlowBasic, self).__init__(name, num, type_)
+        self.num = self.oxm_type
 
 class _Experimenter(_OxmClass):
     _class = OFPXMC_EXPERIMENTER
@@ -172,9 +185,9 @@ def from_user(name_to_field, name, user_value):
     else:
         value = user_value
         mask = None
-    if value is not None:
+    if not value is None:
         value = t.from_user(value)
-    if mask is not None:
+    if not mask is None:
         mask = t.from_user(mask)
     return num, value, mask
 
@@ -187,7 +200,7 @@ def to_user(num_to_field, n, v, m):
     except KeyError:
         t = UnknownType
         name = 'field_%d' % n
-    if v is not None:
+    if not v is None:
         if hasattr(t, 'size') and t.size != len(v):
             raise Exception(
                 'Unexpected OXM payload length %d for %s (expected %d)'
@@ -209,8 +222,9 @@ def _field_desc(num_to_field, n):
 def normalize_user(mod, k, uv):
     (n, v, m) = mod.oxm_from_user(k, uv)
     # apply mask
-    if m is not None:
-        v = ''.join(chr(ord(x) & ord(y)) for (x, y) in itertools.izip(v, m))
+    if not m is None:
+        v = ''.join(chr(ord(x) & ord(y)) for (x, y)
+            in itertools.izip(v, m))
     (k2, uv2) = mod.oxm_to_user(n, v, m)
     assert k2 == k
     return (k2, uv2)
