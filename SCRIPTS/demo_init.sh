@@ -47,6 +47,7 @@ bash $EPC/restart_epc.sh
 
 echo "==========Copying IMSI data into $DATA ==========="
 scp -o StrictHostKeyChecking=no "epc.$domain:/tmp/IMSI_*" /tmp/
+sudo mkdir -p $DATA
 sudo cp /tmp/IMSI_* $DATA/
 
 echo "==========Starting MC .... ============"
