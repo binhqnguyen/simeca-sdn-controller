@@ -3,4 +3,4 @@ Install RYU-4.11 with GTP tunneling OVS:
 
 0. Install RYU-4.11: tar -xf *.tar; cd ryu-4.11; sudo python setup.py install.
 1. Copy ofproto_v1_3.py and oxm_fields.py to /usr/local/lib/python2.7/dist-packages/ryu/ofproto/
-
+2. Copy cfg.py /usr/local/lib/python2.7/dist-packages/ryu/cfg.py
