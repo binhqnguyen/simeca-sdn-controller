@@ -2,6 +2,12 @@
 
 source ../simeca_constants.sh
 
+
+if [ ! -f /var/log/UE_INITED ]; then
+	echo "The UE_ID does not seem to be initialized. Did you forget to run ./init_ue.sh?"
+	exit 1
+fi
+
 #Replace hostname
 if [ ! -f /tmp/HOST_REPLACED ]; then
 	./replace_hostname.sh

@@ -65,9 +65,10 @@ supported_ofctl = {
 
 
 class RestIoTApi(app_manager.RyuApp):
-    _SCRIPTS = "/usr/local/src/simeca"
-    DATA="/usr/local/src/simeca/data"
-    _CONF = "/usr/local/src/simeca/CONF"
+    SIMECA = "/opt/OpenEPC/bin"
+    _SCRIPTS = "%s/simeca" % SIMECA
+    DATA="%s/simeca/data" % SIMECA
+    _CONF = "%s/simeca/CONF" % SIMECA
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION,
                     ofproto_v1_2.OFP_VERSION,
                     ofproto_v1_3.OFP_VERSION]
