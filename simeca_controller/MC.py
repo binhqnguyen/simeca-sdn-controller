@@ -49,6 +49,7 @@ from ryu import cfg
 import subprocess
 import xml.etree.ElementTree as ET
 
+import os
 from ofctl_rest_listener import RestIoTApi
 
 #whether to use encap/decap at ovs or pure IP.
@@ -57,7 +58,7 @@ ENABLE_OVS_GTP = 0
 
 class SMORE_controller(app_manager.RyuApp):
     _SCRIPTS = "/usr/local/src/simeca/start_scripts"
-    XML = "/usr/local/src/simeca/xml"
+    XML = "/opt/simeca/xml"
     XML_TEMPLATE = "%s/input-template-penb.xml" % (XML)
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
     #OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
@@ -248,8 +249,8 @@ class SMORE_controller(app_manager.RyuApp):
     def _write_dpid_to_xml(self, xml_file):
         #Replace HARDCODED dpid with new dpid
         print "Replace input-template.xml with %s" % xml_file
-        subprocess.check_output(['sudo cp %s %s/%s'%(self.XML_TEMPLATE,self.XML, xml_file)], shell=True)
-        tree = ET.parse("%s/%s" % (self.XML,xml_file)) #hardcoding file name for now
+        subprocess.check_output(['cp %s /tmp/%s'%(self.XML_TEMPLATE, xml_file)], shell=True)
+        tree = ET.parse("/tmp/%s" % (xml_file)) #hardcoding file name for now
         xmlroot = tree.getroot()
         name_to_olddpid = {}
         name_to_newdpid = {}
@@ -266,10 +267,10 @@ class SMORE_controller(app_manager.RyuApp):
 
         #replace dpid
         for name in name_to_olddpid:
-           subprocess.check_output(['sudo sed -i \'s/>%s</>%s</\' %s/%s'%(name_to_olddpid[name],name_to_newdpid[name], self.XML, xml_file)], shell=True)
+           subprocess.check_output(['sed -i \'s/>%s</>%s</\' /tmp/%s'%(name_to_olddpid[name],name_to_newdpid[name], xml_file)], shell=True)
         #replace portnumber
         for interfacename in self.interface_to_portnumber:
-           subprocess.check_output(['sudo sed -i \'s/>%s</>%s</\' %s/%s'%(interfacename, self.interface_to_portnumber[interfacename], self.XML, xml_file)], shell=True)
+           subprocess.check_output(['sed -i \'s/>%s</>%s</\' /tmp/%s'%(interfacename, self.interface_to_portnumber[interfacename], xml_file)], shell=True)
         
 
             

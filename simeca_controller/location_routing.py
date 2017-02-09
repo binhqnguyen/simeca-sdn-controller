@@ -43,7 +43,7 @@ LOG.setLevel(logging.INFO)
 ENABLE_OVS_GTP = 0
 
 class LocationRouting:
-    XML="/usr/local/src/simeca/xml"
+    XML="/tmp/"
     switch_server_port = {}
     access_switches = {}
     switchname_to_dpid = {}

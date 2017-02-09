@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../simeca_constants.sh
+source /opt/simeca/simeca_constants.sh
 
 if [ $(whoami) != "root" ]; then
 		echo "This must be run as root"
@@ -23,7 +23,7 @@ let mgn_ip=$OFFSET_MGN_IP+$enb_id
 an_lte_ip="192.168.3.$ip"
 mgn="192.168.254.$mgn_ip"
 
-sudo cp $XML/enodeb-ip-template.xml /opt/OpenEPC/etc/enodeb-ip.xml
+cp $XML/enodeb-ip-template.xml /opt/OpenEPC/etc/enodeb-ip.xml
 
 net_c=$($START_SCRIPTS/get_interface_map.pl | grep an-lte | awk '{print $3}' )
 if [ "$enb" == "enb" ]; then
@@ -40,8 +40,19 @@ sudo sed -i "s/CELLID/$cellid/g" /opt/OpenEPC/etc/enodeb-ip.xml
 sudo sed -i "s/eNodeB/$enb_name/g" /opt/OpenEPC/etc/enodeb-ip.xml
 sudo sed -i "s/MGN/$mgn/g" /opt/OpenEPC/etc/enodeb-ip.xml
 
+#sed -i "s/NET_C_IP/$net_c_ip/g" /tmp/enodeb-ip.xml
+#sed -i "s/NET_C/$net_c/g" /tmp/enodeb-ip.xml
+#sed -i "s/NET_D_IP/$net_d_ip/g" /tmp/enodeb-ip.xml
+#sed -i "s/NET_D/$net_d/g" /tmp/enodeb-ip.xml
+#sed -i "s/CELLID/$cellid/g" /tmp/enodeb-ip.xml
+#sed -i "s/eNodeB/$enb_name/g" /tmp/enodeb-ip.xml
+#sed -i "s/MGN/$mgn/g" /tmp/enodeb-ip.xml
+
+
 sudo cp /opt/OpenEPC/etc/enodeb.xml /opt/OpenEPC/etc/enodeb.bk.xml
-sudo cp /opt/OpenEPC/etc/enodeb-ip.xml /opt/OpenEPC/etc/enodeb.xml
+sudo cp /tmp/enodeb-ip.xml /opt/OpenEPC/etc/enodeb.xml
+#cd $BIN_DIR
+#sudo $BIN_DIR/config_enb.sh
 cd $SIMECA_EPC/wharf
 
 screen -S enodeb -L -d -m -h 10000 /bin/bash -c "./wharf -f /opt/OpenEPC/etc/enodeb.xml"

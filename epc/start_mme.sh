@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../simeca_constants.sh
+source /opt/simeca/simeca_constants.sh
 
 if [ $(whoami) != "root" ]; then
 		echo "This must be run as root"
@@ -9,7 +9,7 @@ fi
 cd $EPC
 sudo /opt/OpenEPC/bin/mme.kill.sh
 
-sudo cp $XML/mme.xml /opt/OpenEPC/etc/
+#sudo cp $XML/mme.xml /opt/OpenEPC/etc/
 
 cd $SIMECA_EPC/wharf
 

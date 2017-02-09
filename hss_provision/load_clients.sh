@@ -2,11 +2,11 @@
 source ../simeca_constants.sh
 
 E_PATH="$HSS_PROVISION"
-SQL="$E_PATH/load_clients.sql"
+SQL="/tmp/load_clients.sql"
 CLEAN_SQL="$E_PATH/clear_db.sql"
-USER_DATA="$SIMECA_PATH/data/user.dat"
+USER_DATA="$HOME_DIR/data/user.dat"
 
-sudo mkdir -p $SIMECA_PATH/data
+mkdir -p $HOME_DIR/data
 if [ $# -lt 2 ]; then
     echo "Usage: <Starting ID> <Number of IMSI entries>"
     exit 1

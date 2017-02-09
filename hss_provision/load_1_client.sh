@@ -9,7 +9,7 @@ IMSI=$1
 MSISDN=$2
 ID=$3
 
-SQL_FILE=ue$IMSI-tmp.sql
+SQL_FILE=/tmp/ue$IMSI-tmp.sql
 echo "/*-------HSS database generated for IMSI $IMSI, MSISDN $MSISDN, ID $ID------*/" > $SQL_FILE
 
 echo "delete from imsu where id=$ID;" >> $SQL_FILE
