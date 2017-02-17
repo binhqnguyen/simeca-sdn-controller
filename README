@@ -11,3 +11,27 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+
+===============================================================================================
+This is SIMECA's SDN controllers source code 
+and scripts to run SIMECA in PhantomNet
+(https://wiki.phantomnet.org/wiki/phantomnet/simeca-sdn-based-iot-mobile-edge-cloud-architecture).
+Modified SIMECA's Mobility Function component is not opensource as it is built based on OpenEPC.
+================================================================================================
+
+
+1. For more information, please refer to : https://wiki.phantomnet.org/wiki/phantomnet/simeca-sdn-based-iot-mobile-edge-cloud-architecture
+
+2. Folders:
+	= CONF: configuration files for SIMECA.
+	= SCRIPTS: scripts to boostrap SIMECA controllers and SIMECA's OVS.
+	= epc: scripts to configure and start SIMECA Mobility Functions (MF) and OpenEPC components (eNodeB, UE).
+	= hss_provision: scripts to provision end-user's subscriber information in HSS's database.
+	= ryu: ryu controller source.
+	= simeca_controller: SIMECA's SDN controller (MC).
+	= start_scripts: scripts to configure and start OVS in SIMECA.
+	= XML: xml file storing SIMECA network topology and computing shortest path forwarding.
+	= simeca_constants.sh: constants used in SIMECA.
+3. If you have questions, contact: binh <something missing> cs.utah.edu 
