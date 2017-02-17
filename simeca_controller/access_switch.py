@@ -1,3 +1,17 @@
+#Copyright Binh Nguyen University of Utah (binh@cs.utah.edu)
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 #!/usr/bin/python
 
 from ryu.controller.handler import CONFIG_DISPATCHER
@@ -104,13 +118,6 @@ class AccessSwitch:
     ssh_p = subprocess.Popen(["ssh", self._ENB2_NODE, "ifconfig | grep -B1 192.168.6.90"], stdout=subprocess.PIPE)
     self._enb2_net_d_mac = re.search(r'HWaddr (.*)',ssh_p.communicate()[0]).group(1).split()[0]
 
-        #ssh_p = subprocess.Popen(["ssh", self._ALICE_NODE, "ifconfig | grep -B1 192.168.3.100 | head -1 | cut -d\" \" -f1"], stdout=subprocess.PIPE)
-    #self._ALICE_AN_LTE_INTERFACE = ssh_p.communicate()[0].rstrip()
-
-    #ssh_p = subprocess.Popen(["ssh", self._BOB_NODE, "ifconfig | grep -B1 192.168.3.101 | head -1 | cut -d\" \" -f1"], stdout=subprocess.PIPE)
-    #self._BOB_AN_LTE_INTERFACE = ssh_p.communicate()[0].rstrip()
-    #print "ALICE_AN_LTE_INTERFACE=%s, BOB_AN_LTE_INTERFACE=%s" % (self._ALICE_AN_LTE_INTERFACE, self._BOB_AN_LTE_INTERFACE)
-    #print "enb-net-d-mac = %s, sgw_net_d_mme_mac = %s, off1_offload_mac= = %s" % (self._enb_net_d_mac, self._sgw_net_d_mme_mac, self._off1_offload_mac)
 	
   '''
   Set default route for offloading node (after _get_MACs())
@@ -121,29 +128,14 @@ class AccessSwitch:
       self._off1_offload_dev = ssh_p.communicate()[0]
       ssh_p = subprocess.Popen(["ssh", self._OFFLOAD_NODE, "sudo ip route add 192.168.3.0/24 dev %s" % self._off1_offload_dev], stdout=subprocess.PIPE)
       ssh_p.communicate()
-      #ssh_p = subprocess.Popen(["ssh", self._BOB_NODE, "sudo ifconfig %s mtu 1400 up" % self._BOB_AN_LTE_INTERFACE], stdout=subprocess.PIPE)
-      #ssh_p.communicate()
-      #ssh_p = subprocess.Popen(["ssh", self._ALICE_NODE, "sudo ifconfig %s mtu 1400 up" % self._ALICE_AN_LTE_INTERFACE], stdout=subprocess.PIPE)
-      #ssh_p.communicate()
-      #ssh_p = subprocess.Popen(["ssh", self._OFFLOAD_NODE, "ifconfig | grep -B1 192.168.10.11"], stdout=subprocess.PIPE)
-      #self._off1_offload_mac = re.search(r'HWaddr (.*)',ssh_p.communicate()[0]).group(1).split()[0]
-      #ssh_p = subprocess.Popen(["ssh", self._OFFLOAD_NODE, "sudo ip route add 192.168.3.0/24 dev %s" % self._off1_offload_mac], stdout=subprocess.PIPE)
 	
   
    
 
   def _build_database(self):
-    #if os.path.isfile(self._OFFLOAD_DB) and os.path.isfile(self._USER_DB):
-      #offload_db = open(self._OFFLOAD_DB)
     if os.path.isfile(self._USER_DB):
       user_db = open(self._USER_DB)
 
-      #Get registered offload IPs
-      #line = offload_db.readline()
-      #while line:
-      #  if line.split()[0] != "":
-      #    self._offload_db.append(line.split()[0])
-      #  line = offload_db.readline()
 
       line = user_db.readline()
       while line:
@@ -861,15 +853,6 @@ class AccessSwitch:
     ovs-ofctl add-flow br0 in_port=$GTP,priority=2,actions=output:$sgw_inf
     '''
     print "*****CONTROLLER: Pushing UPLINK flows for UE %s, offloading server %s, sgw-gtpid %s ....." % (ue_ip,offload_ip,sgw_teid)
-    #uplink_flow_to_gtp = 'in_port=%s,priority=3,eth_type=%s,nw_proto=17,tp_dst=%d,actions=output:%d' %\
-    #(self.enb_inf, self._IP_TYPE, self._GTP_PORT, self._GTP)
-
-    #uplink_flow_gtp = 'in_port=%d,priority=3,tun_id=%s,tun_src=%s,tun_dst=%s,actions=mod_dl_dst:%s,output:%d'%\
-    #(self._GTP, sgw_teid, ue_ip, offload_ip, self._off1_offload_mac, self._DECAP_PORT)
-
-    #uplink_flow_from_gtp = 'in_port=%d,priority=3,eth_type=%s,nw_src=%s,nw_dst=%s,actions=output:%s' %\
-    #(self._DECAP_PORT, self._IP_TYPE, ue_ip, offload_ip, self.offload_inf)
-    #uplink_normal_gtp = "in_port=%d,priority=2,actions=output:%s" % (self._GTP, self.sgw_inf)
 
     #1
     #match = self.parser.OFPMatch(in_port=self.enb_inf,eth_type=self._IP_TYPE,nw_proto=17,tp_dst=self._GTP_PORT)
@@ -920,17 +903,10 @@ class AccessSwitch:
     ovs-ofctl add-flow br0 in_port=$ENCAP,priority=2,eth_type=$IP_TYPE,actions=output:$enb_inf   
     '''
     print "******Pushing DOWNLINK flows for eNB GTPID %s, eNB IP %s, sgw IP %s ....." % (enb_teid, enb_ip, sgw_ip)
-    #downlink_flow = 'in_port=%s,priority=2,eth_type=%s,actions=mod_dl_dst:%s,mod_dl_src=%s,set_field:%s->tun_id,set_field:%s->tun_dst,set_field:%s->tun_src,output:%d' %\
-    #(self.offload_inf, self._IP_TYPE, self._enb_net_d_mac, self._sgw_net_d_mme_mac, enb_teid, enb_ip, sgw_ip, self._ENCAP_PORT)
-
-    #downlink_flow_gtp = 'in_port=%d,priority=2,eth_type=%s,actions=output:%s' %\
-    #(self._ENCAP_PORT, self._IP_TYPE, self.enb_inf)
 
     #1
     match = self.parser.OFPMatch(in_port=self.offload_inf,eth_type=self._IP_TYPE)
     actions = []
-   	#actions.append(self.parser.OFPActionSetField(dl_dst=self._enb_net_d_mac,dl_src=self._sgw_net_d_mme_mac,tunnel_id=enb_teid,tun_dst=enb_ip,tun_src=sgw_ip)
-    #actions.append(self.parser.OFPActionSetField(tunnel_id=enb_teid,tun_dst=enb_ip,tun_src=sgw_ip))
     actions.append(self.parser.OFPActionSetField(eth_dst=self._enb_net_d_mac))
     actions.append(self.parser.OFPActionSetField(eth_src=self._sgw_net_d_mme_mac))
     actions.append(self.parser.OFPActionSetField(tunnel_id=enb_teid))

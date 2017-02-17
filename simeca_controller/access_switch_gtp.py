@@ -1,3 +1,17 @@
+#Copyright Binh Nguyen University of Utah (binh@cs.utah.edu)
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 #!/usr/bin/python
 
 from ryu.controller.handler import CONFIG_DISPATCHER
@@ -63,10 +77,6 @@ class AccessSwitchGtp:
 
     #Get MAC
     self._get_MACs()
-    #Delete old flows on ALL access_switches
-    #self._del_flows_ryu()
-    #Push bridgin flows on ALL access_switches
-    #self._push_flows_bridging_ryu()
    
   '''
   Get MAC addresses of SGW, ENBs associated with AccessSwitches.
@@ -100,18 +110,14 @@ class AccessSwitchGtp:
     inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                            actions)]
 	
-    #print "Match %s" % matches
-    #print "Actions %s" % actions
     if isinstance(matches, list):
         for match in matches:	
             mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
                               match=match, instructions=inst)
             datapath.send_msg(mod)
-            #print "sent match=%s, instruction=%s, to datapath=%s"%(matches, inst, datapath)
     else:
         mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
                               match=matches, instructions=inst)
-        #print "sent match=%s, instruction=%s, to datapath=%s"%(matches, inst, datapath)
         datapath.send_msg(mod)
 			
   def _get_dp_from_switch_name(self, switch_name):
@@ -151,15 +157,6 @@ class AccessSwitchGtp:
 
 
   
-  '''
-  def _set_default_gateway_in_offload_node(self):
-      #print "MANUALLY ADD ARP"
-      ssh_p = subprocess.Popen(["ssh", self._OFFLOAD_NODE, "ifconfig | grep -B1 192.168.8.10"], stdout=subprocess.PIPE)
-      self._off1_offload_interface = re.search(r'(.*) Link encap:',ssh_p.communicate()[0]).group(1).split()[0]
-      #print "off1_offload_interface = %s" % self._off1_offload_interface
-      p = subprocess.Popen(["ssh", self._OFFLOAD_NODE,"sudo ip route add 192.168.3.0/24 dev %s" % (self._off1_offload_interface)], stdout=subprocess.PIPE)
-      p.communicate()
-  '''
 
   #flows for src enb (input_port) to dst enb (output_port)
   #def _push_flows_P2P_ryu(self, input_port, output_port, sgw_teid, enb_teid, sgw_ip, enb_ip, sgw_mac, enb_mac, src_ip, dst_ip):
@@ -185,62 +182,6 @@ class AccessSwitchGtp:
     dp2, of2, ofp2 = self._get_dp_from_switch_name(as2_name)
 
 
-
-    '''
-    #Bridging, lower priority
-    1. sudo ovs-ofctl add-flow br0 in_port=$as1['net-d-enb'],priority=2,actions=output:$netd_port
-    3. sudo ovs-ofctl add-flow br0 in_port=$as2['net-d-enb'],priority=2,actions=output:$netd_port
-    2. sudo ovs-ofctl add-flow br0 in_port=$netd_port,priority=2,actions=output:$as1['net-d-enb'],output:$as2['net-d-enb']
-    '''
-    #print "******P2P: Pushing bridging flows, low priority*****"
-    #1,2
-    #as1
-    #match = []
-    #actions = []
-    #match.append(ofp.OFPMatch(in_port=as1['net-d-enb']))
-    #actions.append(ofp.OFPActionOutput(as1['net-d']))
-    #self._add_flow(dp1,2,match,actions)
-    #as2
-    #match = []
-    #actions = []
-    #match.append(ofp.OFPMatch(in_port=as2['net-d-enb']))
-    #actions.append(ofp.OFPActionOutput(as2['net-d']))
-    #self._add_flow(dp2,2,match,actions)
-    
-
-    
-    #3
-    #as1
-    #match = ofp.OFPMatch(in_port=as1['net-d'])
-    #actions = []
-    #actions.append(ofp.OFPActionOutput(as1['net-d-enb']))
-    #self._add_flow(dp1,2,match,actions)
-    #as2
-    #match = ofp.OFPMatch(in_port=as2['net-d'])
-    #actions = []
-    #actions.append(ofp.OFPActionOutput(as2['net-d-enb']))
-    #self._add_flow(dp2,2,match,actions)
-    
-
-
-    '''
-    #Normal traffic, low priority
-    4. sudo ovs-ofctl add-flow br0 in_port=$gtp_port,priority=2,actions=output:$netd_port
-    '''
-    #print "******P2P: Pushing flow for normal traffic, low priority*****"
-    #4
-    #as1
-    #match = ofp.OFPMatch(in_port=as1['gtp_port'])
-    #actions = []
-    #actions.append(ofp.OFPActionOutput(as1['net-d']))
-    #self._add_flow(dp1,2,match,actions)
-    #as2
-    #match = ofp.OFPMatch(in_port=as2['gtp_port'])
-    #actions = []
-    #actions.append(ofp.OFPActionOutput(as2['net-d']))
-    #self._add_flow(dp2,2,match,actions)
- 
-    
 
     '''
     #alice->bob SGW->ENB2
@@ -334,72 +275,6 @@ class AccessSwitchGtp:
 
        
 
-    #
-    #Shortespath routing takes care of the rest here: output to shortestpath port
-    #Need to do locationrouting.installLocationRoute()
-
-    '''
-    #7: encap at as2 (already there?)
-    match = ofp.OFPMatch(in_port=as1['gtp_decap_port'], eth_type=ether.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
-    actions = []
-    actions.append(ofp.OFPActionSetField(eth_dst=as2['enb-mac']))
-    actions.append(ofp.OFPActionSetField(eth_src=as2['sgw-mac']))
-    actions.append(ofp.OFPActionSetField(tunnel_id=enb2_teid))
-    actions.append(ofp.OFPActionSetField(tun_dst=enb2_location_ip))
-    actions.append(ofp.OFPActionSetField(tun_src=sgw_ip))
-    actions.append(ofp.OFPActionOutput(switch['gtp_encap_port']))
-    self._add_flow(dp,3,match,actions)
-
-    #8: output at as2 (already there?)
-    match = ofp.OFPMatch(in_port=switch['gtp_encap_port'], eth_type=ether.ETH_TYPE_IP, ipv4_src=sgw_ip, ipv4_dst=enb2_ip)
-    #match = ofp.OFPMatch(in_port=switch['gtp_encap_port'], eth_type=ether.ETH_TYPE_IP)
-    actions = []
-    #actions.append(ofp.OFPActionSetField(udp_src=self._GTP_APP_PORT))
-    #actions.append(ofp.OFPActionSetField(udp_dst=self._GTP_APP_PORT))
-    actions.append(ofp.OFPActionOutput(as2['net-d-enb']))
-    self._add_flow(dp,3,match,actions)
-    '''
-
-    '''
-    #alice->bob reply SGW->ENB1
-    9. sudo ovs-ofctl add-flow br0 in_port=$as2['net-d-enb'],priority=3,eth_type=$IP_TYPE,nw_proto=17,tp_dst=$GTP_PORT,actions=output:$gtp_port
-    10. sudo ovs-ofctl add-flow br0 in_port=$gtp_port,priority=3,tun_id=$SGW2_TEID,tun_src=$BOB_IP,tun_dst=$ALICE_IP,actions=output:$gtp_decap_port
-    11. sudo ovs-ofctl add-flow br0 in_port=$gtp_decap_port,priority=3,eth_type=$IP_TYPE,nw_src=$BOB_IP,nw_dst=$ALICE_IP,actions=mod_dl_dst:$ENB1_MAC,mod_dl_src=$SGW_MAC,"set_field:$ENB1_TEID->tun_id","set_field:$ENB1_IP->tun_dst","set_field:$SGW_IP->tun_src",output:$gtp_encap_port
-    12. sudo ovs-ofctl add-flow br0 in_port=$gtp_encap_port,priority=3,eth_type=$IP_TYPE,nw_src=$SGW_IP,nw_dst=$ENB1_IP,actions=mod_tp_dst:$GTP_PORT,mod_tp_src:$GTP_PORT,output:$as1['net-d-enb']
-    '''
-    #print "******P2P: Pushing flows from Alice to Bob, SGW->eNB1 direction*****"
-    #9
-    #match = ofp.OFPMatch(in_port=as2['net-d-enb'], eth_type=ether.ETH_TYPE_IP, ip_proto=17, udp_dst=self._GTP_APP_PORT)
-    #actions = []
-    #actions.append(ofp.OFPActionOutput(self._GTP))
-    #self._add_flow(dp,3,match,actions)
-    
-    #10
-    #match = ofp.OFPMatch(in_port=self._GTP, tunnel_id=sgw2_teid, tun_src=dst_ip, tun_dst=src_ip)
-    #actions = []
-    #actions.append(ofp.OFPActionOutput(switch['gtp_decap_port']))
-    #self._add_flow(dp,3,match,actions)
-
-    #11
-    #match = ofp.OFPMatch(in_port=switch['gtp_decap_port'], eth_type=ether.ETH_TYPE_IP, ipv4_src=dst_ip, ipv4_dst=src_ip)
-    #actions = []
-    #actions.append(ofp.OFPActionSetField(eth_dst=as1['enb-mac']))
-    #actions.append(ofp.OFPActionSetField(eth_src=sgw_mac))
-    #actions.append(ofp.OFPActionSetField(tunnel_id=enb1_teid))
-    #actions.append(ofp.OFPActionSetField(tun_dst=enb1_ip))
-    #actions.append(ofp.OFPActionSetField(tun_src=sgw_ip))
-    #actions.append(ofp.OFPActionOutput(switch['gtp_encap_port']))
-    #self._add_flow(dp,3,match,actions)
-
-    #12
-    #print "xx2"
-    #match = ofp.OFPMatch(in_port=switch['gtp_encap_port'], eth_type=ether.ETH_TYPE_IP, ipv4_src=sgw_ip, ipv4_dst=enb1_ip)
-    #actions = []
-    #actions.append(ofp.OFPActionSetField(udp_src=self._GTP_APP_PORT))
-    #actions.append(ofp.OFPActionSetField(udp_dst=self._GTP_APP_PORT))
-    #actions.append(ofp.OFPActionOutput(as1['net-d-enb']))
-    #self._add_flow(dp,3,match,actions)
-
   #flows for uplink (ovs->offloading server), assuming OFFLOAD SERVER's MAC is known
   def push_flows_uplink_ryu(self, switch_name, sgw_teid, ue_ip, server_ip, server_mac):
     '''
@@ -441,21 +316,15 @@ class AccessSwitchGtp:
     ovs-ofctl add-flow br0 in_port=$ENCAP,priority=2,eth_type=$IP_TYPE,actions=output:$enb_inf   
     '''
     print "******Pushing DOWNLINK flows for eNB GTPID %s, eNB IP %s, sgw IP %s, on switch %s ....." % (enb_teid, enb_ip, sgw_ip, switch_name)
-    #downlink_flow = 'in_port=%s,priority=2,eth_type=%s,actions=mod_dl_dst:%s,mod_dl_src=%s,set_field:%s->tun_id,set_field:%s->tun_dst,set_field:%s->tun_src,output:%d' %\
-    #(switch['offload'], ether.ETH_TYPE_IP, switch['enb_mac'], switch['sgw_mac'], enb_teid, enb_ip, sgw_ip, switch['gtp_encap_port'])
     switch = self.access_switches[switch_name]
     dp, of, ofp = self._get_dp_from_switch_name(switch_name)
 
-    #downlink_flow_gtp = 'in_port=%d,priority=2,eth_type=%s,actions=output:%s' %\
-    #(switch['gtp_encap_port'], ether.ETH_TYPE_IP, switch['net-d-enb'])
 
     #1
     #match = ofp.OFPMatch(in_port=switch['offload'],eth_type=ether.ETH_TYPE_IP, ipv4_dst=enb_location_ip)
     #either in_port=switch['offload'] or in_port=switch['net-d']
     match = ofp.OFPMatch(in_port=switch['offload'],eth_type=ether.ETH_TYPE_IP, ipv4_dst=enb_location_ip)
     actions = []
-   	#actions.append(ofp.OFPActionSetField(dl_dst=switch['enb_mac'],dl_src=switch['sgw_mac'],tunnel_id=enb_teid,tun_dst=enb_ip,tun_src=sgw_ip)
-    #actions.append(ofp.OFPActionSetField(tunnel_id=enb_teid,tun_dst=enb_ip,tun_src=sgw_ip))
     actions.append(ofp.OFPActionSetField(eth_dst=switch['enb_mac']))
     actions.append(ofp.OFPActionSetField(eth_src=switch['sgw_mac']))
     actions.append(ofp.OFPActionSetField(ipv4_dst=ue_ip))
@@ -463,20 +332,10 @@ class AccessSwitchGtp:
     actions.append(ofp.OFPActionSetField(tun_dst=enb_ip))
     actions.append(ofp.OFPActionSetField(tun_src=sgw_ip))
     actions.append(ofp.OFPActionOutput(switch['gtp_encap_port']))
-    #self._add_flow(dp,2,match,actions)
     self._add_flow(dp,3,match,actions)
 
-    #2
-    #print "YYYYYYYYYYYYYYYYYYYYYYY"
-    #match = ofp.OFPMatch(in_port=switch['gtp_encap_port'],eth_type=ether.ETH_TYPE_IP)
-    #actions = []
-    ##actions.append(ofp.OFPActionSetField(udp_src=2152))
-    ##actions.append(ofp.OFPActionSetField(udp_dst=2152))
-    #actions.append(ofp.OFPActionOutput(switch['net-d-enb']))
-    #self._add_flow(dp,3,match,actions)
 
-
-    #3 normal traffic
+    #2 normal traffic
     match = ofp.OFPMatch(in_port=switch['gtp_encap_port'],eth_type=ether.ETH_TYPE_IP)
     actions = []
     actions.append(ofp.OFPActionOutput(switch['net-d-enb']))

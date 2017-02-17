@@ -1,3 +1,17 @@
+#Copyright Binh Nguyen University of Utah (binh@cs.utah.edu)
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 #!/usr/bin/python
 
 import logging
@@ -318,9 +332,6 @@ class Dispatcher(ControllerBase):
     print "******Pushed APRS flows on server switch %s ....." % (hsw_name)
 
 
-  #def __init__ (self, dpset, switchname_to_dpid, access_switches, tor_switch, hsw_switches, ev):
-  #def __init__ (self, dpset, switchname_to_dpid, enb_inf, enb2_inf, sgw_inf, offload_inf, gtp_inf, listen_inf, access_switches, servers, hsw_switches):
-  #def __init__ (self, dpset, switchname_to_dpid, enb_inf, enb2_inf, sgw_inf, offload_inf, gtp_inf, listen_inf, access_switches, servers, hsw_switches):
 
 
   #TODO: move the init functions to ofctl_rest_api
@@ -331,96 +342,7 @@ class Dispatcher(ControllerBase):
     self.waiters = data['waiters']
     self.dpset = data['dpset']
     self.record_list = []
-    #self.tshark_xml = open ("tshark.xml","w")
-    #Install tshark if needed.
-	#self._install_pkg ("tshark")
 
-    '''
-    #only access 1
-    print "xxx %d"%switchname_to_dpid['access1']
-    self.datapath = dpset.get(int(self.switchname_to_dpid['access1']))
-    if self.datapath is not None:
-        self.ofproto = self.datapath.ofproto
-        self.parser = self.datapath.ofproto_parser
-    else:
-        time.sleep(2)
-        self.datapath = dpset.get(int(self.switchname_to_dpid['access1']))
-        self.ofproto = self.datapath.ofproto
-        self.parser = self.datapath.ofproto_parser
-    '''
-
-    """
-    self._get_enb_location_ip_map('ENB.data')
-    #print self.enb_location_ip_map
-    self._get_ue_ip_server_name_map('SERVER.data')
-    self.locationrouting = LocationRouting(self.dpset, self.access_switches, self.switchname_to_dpid) 
-    self.access_switch_gtp = AccessSwitchGtp(self.dpset, self.switchname_to_dpid, self.access_switches)
-    
-    self.attached_ue_ip = open('../iot-controller-eval/e2e_delay_exp/ATTACHED_IP.data','w',0)
-    self.p2p_existed_ip = open('../iot-controller-eval/e2e_delay_exp/P2P_IP.data','w',0)
-
-    #test
-    #for i in range(1,300):
-    #    self._allocate_ipv4('0011040')
-
-    #self._get_MACs()
-    self._set_default_route_servers()
-    self._build_database()
-    self._del_flows_ryu()
-    self._push_arp_server()
-    self.access_switch_gtp.push_flows_bridging_ryu()
-    """
-    #for enb_cellid in self.enb_location_ip_map:
-    #    self._set_default_route_enb_prefix('192.190.0.0/16', enb_cellid)
-    
-
-
-
-    '''
-    TEST
-    '''
-    #self.parse_xml_file('attach-s1ho-charlie.xml')
-    #print "Done!"
-    #time.sleep(10000)
-    #sys.exit(1)
-    '''
-    ue_ip='192.235.235.68'
-    ue_imsi="001011234567892"
-    enb1_cellid="00011040"
-    enb2_cellid="00011050"
-    enb1_teid=int('0x00000013',16)
-    sgw1_teid=16
-    sgw2_teid=16
-    enb2_teid=int('0x00001C8C',16)
-    enb1_ip='192.168.4.90'
-    enb2_ip='192.168.4.91'
-    sgw_ip='192.168.4.20'
-
-
-    self._installHoFlows(ue_ip, ue_imsi, enb1_cellid , enb2_cellid, enb1_teid, sgw1_teid, enb2_teid, sgw2_teid, sgw_ip, enb1_ip, enb2_ip)
-    '''
-
-    '''
-    #test
-    ue1_ip="192.53.53.157"
-    ue2_ip="192.249.249.60"
-    enb1_ip="192.168.4.90"
-    enb2_ip="192.168.4.91"
-    sgw_ip="192.168.4.20"
-    enb1_teid=21
-    sgw1_teid=16
-    enb2_teid=22
-    sgw2_teid=16
-    enb1_cellid="00011040"
-    enb2_cellid="00011050"
-    ue1_imsi="001011234567890"
-    ue2_imsi="001011234567891"
-
-    self._installIotFlows(enb1_teid, enb1_ip, sgw1_teid, sgw_ip, ue1_ip, ue1_imsi, enb1_cellid)
-    self._installIotFlows(enb2_teid, enb2_ip, sgw2_teid, sgw_ip, ue2_ip, ue2_imsi, enb2_cellid)
-    #TODO: Which enb to which enb (ie, how to get enb1_cellid, enb2_cellid)
-    self._installP2PFlows(ue1_ip, ue2_ip, enb1_teid, sgw1_teid, enb2_teid, sgw2_teid, sgw_ip, enb1_cellid, enb2_cellid, enb1_ip, enb2_ip)
-    '''   
   @staticmethod   
   def get_enb_location_ip_map(filename):
       LOG.info("Getting EnodeBs information...")
@@ -595,14 +517,7 @@ class Dispatcher(ControllerBase):
     if len(post_values) < 3 or "ue_ip" not in post_values or "enb_cellid" not in post_values or "imsi" not in post_values:
         LOG.info("Invalid POST values: <ue_ip> <enb_cellid> <imsi>!")
         return Response(status=404)
-    #TEST
-    #post_values = {"ue_ip":"192.168.3.100","enb_cellid":"00011d70"}
-    #enb_teid = post_values['enb_teid']
-    #enb_ip = post_values['enb_ip']
-    #sgw_teid = post_values['sgw_teid']
-    #sgw_ip = post_values['sgw_ip']
     ue_ip = post_values['ue_ip']
-    #ue_imsi = post_values['ue_imsi']
     enb_cellid = post_values['enb_cellid']
     imsi = post_values['imsi'][0:15]
     if imsi in self.imsi_to_ue_ip:
@@ -621,10 +536,6 @@ class Dispatcher(ControllerBase):
     #This mapping changes uppon hand over, ie, when UE moves, ue_ip does not change, its enb_location_ip change: pkts destinated for the ue_ip are now routed to the new enb.
     if ue_ip not in self.ueip_to_enb_location_ip:
         self.ueip_to_enb_location_ip[ue_ip] = [enb_location_ip, enb_netmask, enb_cellid]
-    #server_name = self.ue_ip_server_name_map[ue_imsi]
-    #server_name = "server1"
-    #if random.randint(0,1) == 1:
-    #    server_name = "server2"
     server_name = self.imsi_server_name_map[imsi]
     self.ue_ip_server_name_map[ue_ip] = server_name
 
@@ -632,7 +543,6 @@ class Dispatcher(ControllerBase):
 
 
 
-    #self.attached_ue_ip.write("%s|%s|%s\n"%(ue_ip,self.servers[server_name]['ip'],enb_cellid))
     LOG.info("Installing Iot flows: ue_ip %s,\n enb_cellid = %s,\n enb_location_ip = %s,\n enb_location_ip_netmask = %s,\n on access-switch %s,\n hsw switch name = %s,\n SERVER NAME = %s (ip=%s)\n" % (ue_ip, enb_cellid, enb_location_ip, enb_netmask, access_switch_name, hsw_name, server_name, self.servers[server_name]['ip']))
 
     self.locationrouting.installLocationRoute(ue_ip=ue_ip,dst_ip=self.servers[server_name]['ip'], src_access_dpid=str(self.switchname_to_dpid[access_switch_name]), dst_switch_dpid=str(self.switchname_to_dpid[hsw_name]), src_enb_location_ip=enb_location_ip, src_enb_netmask=enb_netmask, server_mac=self.servers[server_name]['net-server-mac'], src_enb_mac=self.access_switches[access_switch_name]['enb_mac'])
@@ -653,7 +563,6 @@ class Dispatcher(ControllerBase):
 
     #This mapping changes uppon hand over, ie, when UE moves, ue_ip does not change, its enb_location_ip change: pkts destinated for the ue_ip are now routed to the new enb.
     self.ueip_to_enb_location_ip[ue_ip] = [enb_location_ip, enb_netmask, enb_cellid]
-    #server_name = self.ue_ip_server_name_map[ue_imsi]
     server_name = "server1"
     if random.randint(0,1) == 1:
         server_name = "server2"
@@ -671,7 +580,6 @@ class Dispatcher(ControllerBase):
     #TODO: replace target IP by enb_location_ip
     #TODO: arp from eNB -> server.
     self.locationrouting.installLocationRoute(ue_ip,self.servers[server_name]['ip'], str(self.switchname_to_dpid[access_switch_name]), str(self.switchname_to_dpid[hsw_name]), enb_location_ip,enb_netmask)
-    #self._set_static_arp_server(server_name, enb_location_ip, access_switch_name)
     self._set_default_route_enb(ue_ip, enb_cellid)
 
 
@@ -733,7 +641,6 @@ class Dispatcher(ControllerBase):
 
     LOG.debug("Installing P2P flows: \nfrom %s (%s/%s) to %s (%s/%s) \non as1 %s, as2 %s ..." % (ue1_ip, enb1_location_ip,enb1_netmask, ue2_ip, enb2_location_ip, enb2_netmask, as1_name, as2_name))
 
-    #self.access_switch_gtp.push_flows_P2P_ryu(as1_name, as2_name, sgw1_teid, enb1_teid, sgw2_teid, enb2_teid, sgw_ip, ue1_ip, ue2_ip, enb1_location_ip, enb2_location_ip, enb1_ip, enb2_ip)
     
     #UE1->UE2:
     #   - AS1, UL: src=ue1_ip->src=enb1_location_ip, dst=ue2_ip->dst=enb2_location_ip.
@@ -781,8 +688,6 @@ class Dispatcher(ControllerBase):
 
     ue1_ip = self.imsi_to_ue_ip[post['imsi1']]
     ue2_ip = self.imsi_to_ue_ip[post['imsi2']]
-    #enb1_ip = post['enb1_ip']
-    #enb2_ip = post['enb2_ip']
     
     self.installP2P(ue1_ip, ue2_ip)
     
@@ -804,12 +709,6 @@ class Dispatcher(ControllerBase):
     target_enb_netmask = self.enb_location_ip_map[target_enb_cellid]['location_ip_netmask']
     print "Installing P2P HO flows:\n src_enb (%s, %s, %s),\n target_enb(%s, %s, %s),\n enb3 (%s, %s, %s) ..." % (src_as_name, src_enb_cellid, src_enb_location_ip, target_as_name, target_enb_cellid, target_enb_location_ip, enb3_as_name, enb3_cellid, enb3_location_ip)
  
-    '''TEst
-    '''
-    #ue_ip='192.235.235.68'
-    #enb2_teid=int('0x00001C8C',16)
-    #enb2_ip='192.168.4.91'
-    #sgw_ip='192.168.4.20'
 
     #UL AND DL Routing flow on target enb to enb3:
     #UL: src=ue1_ip, dst=ue2_ip -> src=target_enb_location_ip, dst=enb3_location_ip
@@ -823,11 +722,6 @@ class Dispatcher(ControllerBase):
     #TODO: #2
     self.locationrouting.modifyEnb3P2PHoFlow(enb3_as_switch_dpid=str(self.switchname_to_dpid[enb3_as_name]), enb3_as_switch_name=enb3_as_name, enb3_location_ip=enb3_location_ip, enb3_mac=self.access_switches[enb3_as_name]['enb_mac'], ue1_ip=ue1_ip,ue2_ip=ue2_ip, src_enb_location_ip=src_enb_location_ip, target_enb_location_ip=target_enb_location_ip)
 
-    #Server Arp for returning pkt to tenb
-    #self._set_static_arp_server(server_name, enb2_location_ip, as2_name)
-
-    #Add default to UE on tenb: DONE by HO protocol itself 
-    #self._set_default_route_enb(ue1_ip, target_enb_cellid)
 
     #Triangle flow on source eNB's access switch.
     #Modify: dst=src_enb_location_ip -> dst=target_enb_location_ip
@@ -854,10 +748,7 @@ class Dispatcher(ControllerBase):
 
     ue1_ip = self.imsi_to_ue_ip[post['moving_ue_imsi']]
     ue2_ip = self.imsi_to_ue_ip[post['ue2_imsi']]
-    #src_enb_cellid = post['src_enb_cellid']    
     target_enb_cellid = self.get_cellid_from_ip(post['tenb_ip'])   
-    #enb3_enb_cellid = post['enb3_cellid']    
-    #ue_imsi = post['ue_imsi']
     self.installP2PHoFlow(ue1_ip, ue2_ip, target_enb_cellid)
 
 
@@ -919,12 +810,10 @@ class Dispatcher(ControllerBase):
 
     start = time.time()
     ue_ip = post['ue_ip']
-    #enb1_cellid = post['senb_cellid']    
     enb2_cellid = self.get_cellid_from_ip(post['tenb_ip'])    
     if enb2_cellid is None:
         LOG.info("Could not find cellid for enb %s. Quit!" % post['tenb_ip'])
         return
-    #ue_imsi = post['ue_imsi']
 
     #Retrieve info of attached UE
     enb1_location_ip, enb1_netmask, enb1_cellid = self.ueip_to_enb_location_ip[ue_ip]
@@ -961,17 +850,13 @@ class Dispatcher(ControllerBase):
 
     start = time.time()
     ue_ip = post['ue_ip']
-    #enb1_cellid = post['senb_cellid']    
     enb2_cellid = self.get_cellid_from_ip(post['tenb_ip'])    
     if enb2_cellid is None:
         LOG.info("Could not find cellid for enb %s. Quit!" % post['tenb_ip'])
         return
-    #ue_imsi = post['ue_imsi']
 
     #Retrieve info of attached UE
     enb1_location_ip, enb1_netmask, enb1_cellid = self.ueip_to_enb_location_ip[ue_ip]
-    #'''TEST'''
-    #enb1_location_ip, enb1_netmask, enb1_cellid = '192.168.1.1', '255.255.0.0', '00011040'
     as1_name = self.enb_location_ip_map[enb1_cellid]['access_switch_name']
     as2_name = self.enb_location_ip_map[enb2_cellid]['access_switch_name']
     server_name = self.ue_ip_server_name_map[ue_ip]
@@ -982,26 +867,10 @@ class Dispatcher(ControllerBase):
     self.target_enb_info_ho[ue_ip] = [enb2_location_ip, enb2_netmask]
     print "Installing HO (phase 1) flows from new as %s, new enb location IP %s, to server %s ..." % (as2_name, enb2_location_ip, self.servers[server_name]['ip'])
  
-    '''TEst
-    '''
-    #ue_ip='192.235.235.68'
-    #enb2_teid=int('0x00001C8C',16)
-    #enb2_ip='192.168.4.91'
-    #sgw_ip='192.168.4.20'
 
     #UL AND DL Routing flow on AS2
     self.locationrouting.installLocationRoute(ue_ip=ue_ip,dst_ip=self.servers[server_name]['ip'], src_access_dpid=str(self.switchname_to_dpid[as2_name]), dst_switch_dpid=str(self.switchname_to_dpid[hsw_name]), src_enb_location_ip=enb2_location_ip,src_enb_netmask=enb2_netmask, server_mac=self.servers[server_name]['net-server-mac'], src_enb_mac=self.access_switches[as2_name]['enb_mac'])
 
-    #UL: decap, match sgw2_teid, change dst_mac to server2's Mac.
-    #self.access_switch_gtp.push_flows_uplink_ryu(as2_name, sgw2_teid, ue_ip, self.servers[server_name]['ip'], self.servers[server_name]['net-server-mac'])
-    #DL: encap with tenb's TEID (enb TEID is in handover request ack from tenb to mme)
-    #self.access_switch_gtp.push_flows_downlink_ryu(as2_name, enb2_teid, enb2_ip, sgw_ip, ue_ip, enb2_location_ip)
-  
-    #Server Arp for returning pkt to tenb
-    #self._set_static_arp_server(server_name, enb2_location_ip, as2_name)
-
-    #Add default to UE on tenb 
-    #self._set_default_route_enb(ue_ip, enb2_cellid)
 
     #triangle flow on source eNB's access switch.
     self.locationrouting.installTriangleHoFlow(src_enb_switch_dpid=str(self.switchname_to_dpid[as1_name]), src_enb_switch_name=as1_name, ue_ip=ue_ip,src_enb_location_ip=enb1_location_ip,target_enb_location_ip=enb2_location_ip)
@@ -1033,12 +902,6 @@ class Dispatcher(ControllerBase):
     enb2_netmask = self.enb_location_ip_map[enb2_cellid]['location_ip_netmask']
     print "Installing HO flows from new as %s, new enb location IP %s, to server %s ..." % (as2_name, enb2_location_ip, self.servers[server_name]['ip'])
  
-    '''TEst
-    '''
-    #ue_ip='192.235.235.68'
-    #enb2_teid=int('0x00001C8C',16)
-    #enb2_ip='192.168.4.91'
-    #sgw_ip='192.168.4.20'
 
     #UL AND DL Routing flow on AS2
     self.locationrouting.installLocationRoute(ue_ip,self.servers[server_name]['ip'], str(self.switchname_to_dpid[as2_name]), str(self.switchname_to_dpid[hsw_name]), enb2_location_ip,enb2_netmask)
@@ -1051,9 +914,6 @@ class Dispatcher(ControllerBase):
     #UL flow at HSW: translate src_ip enb2_location_ip to enb1_location_ip for seamless.
     #DL flow at HSW: translate dst_ip enb1_location_ip to enb2_location_ip for path switch (routing to enb2).
     self.locationrouting.installServerHoFlow(str(self.switchname_to_dpid[hsw_name]), self.hsw_switches[hsw_name]['net-tor2'],self.hsw_switches[hsw_name]['net-server'], enb1_location_ip, enb2_location_ip)
-
-    #Server Arp for returning pkt to tenb
-    #self._set_static_arp_server(server_name, enb2_location_ip, as2_name)
 
     #Add default to UE on tenb 
     self._set_default_route_enb(ue_ip, enb2_cellid)
@@ -1107,12 +967,6 @@ class Dispatcher(ControllerBase):
     else: 
       print "NO DATABASE AVAILABLE!"
     
-    #for l in open("P2P.data",'r').readlines():
-    #        tokens = l.split('|')
-    #        if tokens[0].rstrip() in Dispatcher.p2p_db:
-    #            Dispatcher.p2p_db[tokens[0].rstrip()].append(tokens[1].rstrip())
-    #        else:
-    #            Dispatcher.p2p_db[tokens[0].rstrip()] = [tokens[1].rstrip()]
 
 
   #
@@ -1125,17 +979,12 @@ class Dispatcher(ControllerBase):
     print "Start sniffing on interface %s " %interfaces
     tshark_out = subprocess.Popen(["sudo","tshark", "-i", interfaces, "-f", "sctp", "-T", "pdml"], stdout=subprocess.PIPE)
     packet_xml = ""
-    #file_xml = self._XML_HEADER
     for line in iter(tshark_out.stdout.readline, ""):
       packet_xml += line
-      #file_xml += line
       if re.match(r'</packet>',line):
         packet_xml += self._XML_END
-        #self.tshark_xml.write(file_xml)
         self._parse_packet(packet_xml)
         packet_xml = self._XML_HEADER
-    #add footer of XML file
-    #self.tshark_xml.write(self._XML_END)
 
 
   #
@@ -1184,35 +1033,13 @@ class Dispatcher(ControllerBase):
       LAI["MNC"] = None
       LAI["LAC"] = None
 
-    '''
-    #eNB cell-ID
-    print "YYYYYYYY"
-    print init_request
-    #eutran_cgi = init_request[0].findall(".//field[@name='s1ap.ProtocolIE_Field']")
-    eutran_cgi = init_request[0].findall(".//field[@show='Item 3: id-EUTRAN-CGI']")
-    print eutran_cgi
-    for eu in eutran_cgi:
-        print eu.get("value")
-        print eu.findall(".//field[@name='s1ap.EUTRAN_CGI']")[0].get("showname") if eu.findall(".//field[@name='s1ap.EUTRAN_CGI']") else None
-    for ir in eutran_cgi:
-        print "XXXXX"
-        print ir.findall(".//field[@name='s1ap.cell_ID']")
-        enb_cellid = ir.findall(".//field[@name='s1ap.cell_ID']")[0].get("value") if ir.findall(".//field[@name='s1ap.cell_ID']") else  None
-        print enb_cellid
-    '''
     enb_cellid = "0"
     
     IMSI = init_request[0].findall(".//field[@name='nas_eps.emm.imsi']")[0].get("show") if init_request[0].findall(".//field[@name='nas_eps.emm.imsi']") else  None
     
-    #print "ABC", IMSI
-    #for i in init_request[0].findall(".//field[@name='nas_eps.emm.imsi']"):
-    #    print i.get("show")
-    #if (ue_mme_id and ue_enb_id and s_gtp_id and TAI and GUTI and LAI and pdn):
     NAS_request = NAS_RAB_setup_request(s_gtp_id, sgw_ip, TAI, GUTI, LAI, pdn, IMSI, enb_cellid)
     s1ap_rab_request = S1AP(pkt_cnt, msg_text, ue_mme_id, ue_enb_id, NAS_request)
     if (s1ap_rab_request):
-      #print "s1ap-rab-request:\n"
-      #s1ap_rab_request.print_all()
       return s1ap_rab_request
     return None
 
@@ -1325,11 +1152,6 @@ class Dispatcher(ControllerBase):
         self._parse_packet(packet_xml)
         packet_xml = self._XML_HEADER
     sys.exit(0)
-    #
-    #tree = ET.parse(xml_file)
-    #root = tree.getroot()
-    #print "parsing file " , xml_file
-    #print root
     #Iterate through packets list.
     for packet in root.iter("packet"):
       self._parse_packet(packet) 
@@ -1544,23 +1366,11 @@ class Dispatcher(ControllerBase):
           ue_ip = getattr(RAB_record,"ue_ip")
           enb_cellid = getattr(RAB_record,"enb_cellid")
           ue_imsi = getattr(RAB_record,"imsi")
-          #ue_enb_id = getattr(RAB_record, "ue_enb_id")
-          #init_msg = self._get_initiating_msg(ue_enb_id)
-          #ue_imsi = "0"
-          #enb_cellid = "0"
-          #if init_msg:
-          #  ue_imsi = getattr(init_msg,"ue_imsi")
-          #  enb_cellid = getattr(init_msg, "enb_cellid")
           
           p2p = p2p_info(ue_ip, enb_ip, sgw_ip, enb_gtpid, sgw_gtpid, ue_imsi, enb_cellid)
           self._p2p_list[ue_imsi] = p2p
           #check if user is in database
           found = 0
-		  #print M_TIMSI
-          #for mtimsi in self._user_db:
-          #  if M_TIMSI == mtimsi:
-          #    found = 1
-          #    break
           for imsi in self._user_db:
             if ue_imsi == imsi:
               found = 1
@@ -1569,40 +1379,23 @@ class Dispatcher(ControllerBase):
           if found == 1:
             print "Attached UE is a subscriber. Do offloading..."
             self._installIotFlows(enb_gtpid, enb_ip, sgw_gtpid, sgw_ip, ue_ip, ue_imsi, enb_cellid)
-            #self._push_flows_downlink_ryu(enb_gtpid, enb_ip, sgw_ip)
-            #self._push_flows_uplink_ryu(sgw_gtpid, ue_ip, self._OFFLOAD_IP)
 
             ###BENCHMARKING
             ###push-flow commands sent out
             end_time = time.time()
-			#print "END=%f"%end_time
-			#print "DELTA_PUSH_ALL = %f" % (end_time-start_time)
           else:
             print "Attached UE is NOT a subscriber. Not doing offloading..."
-          #print self._send_add_downlink_flow()
-          #print self.rest.dump_flows(self.local_dpid).text
           self.RAB_Information.print_all()
 
           p2p_1_l = []
           p2p_2_l = []
-          #Attached imsi is the starting point
-          #for i in self.p2p_db:
-          #    print "%s->%s\n----------\n" % (i, self.p2p_db[i])
-          #for i in self._p2p_list:
-          #    print "%s->%s"%(i,self._p2p_list[i])
-          
-          #for i in self.p2p_db:
-          #    print "%s:%s" % (i, self.p2p_db[i])
 
           if ue_imsi in self.p2p_db:
-              #print "Starting ", ue_imsi
               for i in self.p2p_db[ue_imsi]:
-                  #print "Starting ", self.p2p_db[ue_imsi]
                   if i in self._p2p_list:
                     p2p_1_l.append(p2p)
                     p2p_2_l.append(self._p2p_list[i])
           for i in self.p2p_db:
-              #print "Ending %s: search %s" %(ue_imsi,i)
               if i in self._p2p_list and ue_imsi in self.p2p_db[i]:
                     p2p_1_l.append(self._p2p_list[i])
                     p2p_2_l.append(p2p)
@@ -1617,13 +1410,8 @@ class Dispatcher(ControllerBase):
               imsi_2 = getattr(p2p_2,"ue_imsi")
               enb1_cellid = getattr(p2p_1,"enb_cellid")
               enb2_cellid = getattr(p2p_2,"enb_cellid")
-              #print enb1_cellid
-              #print enb2_cellid
-              #print self.p2p_existed
               if imsi_1 == imsi_2 or enb1_cellid == enb2_cellid or "%s-%s"%(imsi_1,imsi_2) in self.p2p_existed: #not in the same enodeb then set up path 
                 print "Not install P2P for %s,%s" % (imsi_1,imsi_2)
-                #p2p_1_l.remove(p2p_1)
-                #p2p_2_l.remove(p2p_2)
                 continue
             
               print "Install P2P path for %s(enb-%s) and %s(enb-%s)" % (imsi_1, enb1_cellid, imsi_2, enb2_cellid)
@@ -1641,40 +1429,6 @@ class Dispatcher(ControllerBase):
               #if imsi_1 in self.p2p_db and imsi_2 in self.p2p_db:
 
               self._installP2PFlows(ue1_ip, ue2_ip, enb1_teid, sgw1_teid, enb2_teid, sgw2_teid, sgw_ip, enb1_ip, enb2_ip)
-          '''
-          #BINH: remember 2 attached M_TIMSIs, create the P2P flows between them if 2 of them are in the user.dat.
-          for p2p_1 in self._p2p_list:
-              for p2p_2 in self._p2p_list:
-                  imsi_1 = getattr(p2p_1,"ue_imsi")
-                  imsi_2 = getattr(p2p_2,"ue_imsi")
-
-                  if imsi_1 == imsi_2: 
-                      continue
-
-                  print "P2P checking for %s and %s" % (imsi_1, imsi_2)
-                  ue1_ip = getattr(p2p_1,"ue_ip")
-                  ue2_ip = getattr(p2p_2,"ue_ip")
-                  enb1_ip = getattr(p2p_1,"enb_cellid")
-                  enb2_ip = getattr(p2p_2,"enb_cellid")
-                  sgw1_teid = getattr(p2p_1,"sgw_teid")
-                  sgw2_teid = getattr(p2p_2,"sgw_teid")
-                  enb1_teid = getattr(p2p_1,"enb_teid")
-                  enb2_teid = getattr(p2p_2,"enb_teid")
-                  enb1_ip = getattr(p2p_1,"enb_ip")
-                  enb2_ip = getattr(p2p_2,"enb_ip")
-                  sgw_ip = getattr(p2p_1,"sgw_ip")
-                  if imsi_1 in self.p2p_db and imsi_2 in self.p2p_db:
-                      #self._push_flows_P2P_ryu(self.enb1_port, self.enb2_port, self.netd_port, self._GTP, sgw1_teid, enb1_teid, sgw2_teid, enb2_teid, sgw_ip, enb1_ip, enb2_ip, self._sgw_net_d_mme_mac, self._enb_net_d_mac, self._enb2_net_d_mac, ip_1, ip_2)
-                      #print "sgw1_teid =%02x, sgw2_teid=%02x" % (sgw1_teid, sgw2_teid)
-                      #self._push_flows_P2P_ovs(self.enb1_port, self.enb2_port, self.netd_port, self._GTP, sgw1_teid, enb1_teid, sgw2_teid, enb2_teid, sgw_ip, enb1_ip, enb2_ip, self._sgw_net_d_mme_mac, self._enb_net_d_mac, self._enb2_net_d_mac, ip_1, ip_2)
-                    
-                      print p2p_1
-                      print p2p_2   
-                      self._installP2PFlows(ue1_ip, ue2_ip, enb1_teid, sgw1_teid, enb2_teid, sgw2_teid, sgw_ip, enb1_ip, enb2_ip)
-                      self._p2p_list.remove(p2p_1)
-                      self._p2p_list.remove(p2p_2)
-                      print "p2p_list size %s" % len(self._p2p_list)
-        '''   
       #
       #Process other s1ap messages
       #
@@ -1729,8 +1483,6 @@ class Dispatcher(ControllerBase):
     inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                            actions)]
 	
-    #print "Match %s" % matches
-    #print "Actions %s" % actions
     if isinstance(matches, list):
         for match in matches:	
             mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
@@ -1811,16 +1563,6 @@ class Dispatcher(ControllerBase):
   #flows for src enb (input_port) to dst enb (output_port)
   #def _push_flows_P2P_ryu(self, input_port, output_port, sgw_teid, enb_teid, sgw_ip, enb_ip, sgw_mac, enb_mac, src_ip, dst_ip):
   def _push_flows_P2P_ryu(self, enb1_port, enb2_port, netd_port, gtp_port, sgw1_teid, enb1_teid, sgw2_teid, enb2_teid, sgw_ip, enb1_ip, enb2_ip, sgw_mac, enb1_mac, enb2_mac, src_ip, dst_ip):
-    '''
-    #src enb to dst enb
-    ovs-ofctl add-flow br0 in_port=$src_enb_inf,priority=3,eth_type=$IP_TYPE,nw_proto=17,tp_dst=$GTP_PORT,tun_id=$SGW_TEID,tun_src=$SRC_IP,tun_dst=$DST_IP,actions=mod_dl_dst:$ENB_MAC,mod_dl_src=$SGW_MAC,"set_field:$ENB_TEID->tun_id","set_field:$ENB_IP->tun_dst","set_field:$SGW_IP->tun_src",output:$dst_enb_inf
-
-    #Hard coded:
-    #Alice->Bob
-    ovs-ofctl add-flow br0 in_port=$enb1_inf,priority=3,eth_type=$IP_TYPE,nw_proto=17,tp_dst=$GTP_PORT,tun_id=$SGW_TEID,tun_src=$ALICE_IP,tun_dst=$BOB_IP,actions=mod_dl_dst:$ENB2_MAC,mod_dl_src=$SGW_MAC,"set_field:$ENB2_TEID->tun_id","set_field:$ENB2_IP->tun_dst","set_field:$SGW_IP->tun_src",output:$enb2_inf
-    #Bob->Alice
-    ovs-ofctl add-flow br0 in_port=$enb2_inf,priority=3,eth_type=$IP_TYPE,nw_proto=17,tp_dst=$GTP_PORT,tun_id=$SGW_TEID,tun_src=$BOB_IP,tun_dst=$ALICE_IP,actions=mod_dl_dst:$ENB1_MAC,mod_dl_src=$SGW_MAC,"set_field:$ENB1_TEID->tun_id","set_field:$ENB1_IP->tun_dst","set_field:$SGW_IP->tun_src",output:$enb1_inf
-    '''
 
     print "******Pushing P2P flows for:"
     print "srcUEIp %s, dstUEIp %s"% (src_ip,dst_ip)
@@ -1899,12 +1641,8 @@ class Dispatcher(ControllerBase):
     self._add_flow(self.datapath,3,match,actions)
 
     #8
-    #print "xx1"
     match = self.parser.OFPMatch(in_port=self._ENCAP_PORT, eth_type=self._IP_TYPE, ipv4_src=sgw_ip, ipv4_dst=enb2_ip)
-    #match = self.parser.OFPMatch(in_port=self._ENCAP_PORT, eth_type=self._IP_TYPE)
     actions = []
-    #actions.append(self.parser.OFPActionSetField(udp_src=self._GTP_PORT))
-    #actions.append(self.parser.OFPActionSetField(udp_dst=self._GTP_PORT))
     actions.append(self.parser.OFPActionOutput(enb2_port))
     self._add_flow(self.datapath,3,match,actions)
 
@@ -1941,11 +1679,8 @@ class Dispatcher(ControllerBase):
     self._add_flow(self.datapath,3,match,actions)
 
     #12
-    #print "xx2"
     match = self.parser.OFPMatch(in_port=self._ENCAP_PORT, eth_type=self._IP_TYPE, ipv4_src=sgw_ip, ipv4_dst=enb1_ip)
     actions = []
-    #actions.append(self.parser.OFPActionSetField(udp_src=self._GTP_PORT))
-    #actions.append(self.parser.OFPActionSetField(udp_dst=self._GTP_PORT))
     actions.append(self.parser.OFPActionOutput(enb1_port))
     self._add_flow(self.datapath,3,match,actions)
 
@@ -1959,16 +1694,6 @@ class Dispatcher(ControllerBase):
     ovs-ofctl add-flow br0 in_port=$GTP,priority=2,actions=output:$sgw_inf
     '''
     print "*****CONTROLLER: Pushing UPLINK flows for UE %s, offloading server %s, sgw-gtpid %s ....." % (ue_ip,offload_ip,sgw_teid)
-    #uplink_flow_to_gtp = 'in_port=%s,priority=3,eth_type=%s,nw_proto=17,tp_dst=%d,actions=output:%d' %\
-    #(self.enb_inf, self._IP_TYPE, self._GTP_PORT, self._GTP)
-
-    #uplink_flow_gtp = 'in_port=%d,priority=3,tun_id=%s,tun_src=%s,tun_dst=%s,actions=mod_dl_dst:%s,output:%d'%\
-    #(self._GTP, sgw_teid, ue_ip, offload_ip, self._off1_offload_mac, self._DECAP_PORT)
-
-    #uplink_flow_from_gtp = 'in_port=%d,priority=3,eth_type=%s,nw_src=%s,nw_dst=%s,actions=output:%s' %\
-    #(self._DECAP_PORT, self._IP_TYPE, ue_ip, offload_ip, self.offload_inf)
-    #uplink_normal_gtp = "in_port=%d,priority=2,actions=output:%s" % (self._GTP, self.sgw_inf)
-    
         #1
     #match = self.parser.OFPMatch(in_port=self.enb_inf,eth_type=self._IP_TYPE,nw_proto=17,tp_dst=self._GTP_PORT)
     match = self.parser.OFPMatch(in_port=self.enb_inf,eth_type=self._IP_TYPE,ip_proto=17,udp_dst=self._GTP_PORT)
@@ -2020,18 +1745,11 @@ class Dispatcher(ControllerBase):
     ovs-ofctl add-flow br0 in_port=$ENCAP,priority=2,eth_type=$IP_TYPE,actions=output:$enb_inf   
     '''
     print "******Pushing DOWNLINK flows for eNB GTPID %s, eNB IP %s, sgw IP %s ....." % (enb_teid, enb_ip, sgw_ip)
-    #downlink_flow = 'in_port=%s,priority=2,eth_type=%s,actions=mod_dl_dst:%s,mod_dl_src=%s,set_field:%s->tun_id,set_field:%s->tun_dst,set_field:%s->tun_src,output:%d' %\
-    #(self.offload_inf, self._IP_TYPE, self._enb_net_d_mac, self._sgw_net_d_mme_mac, enb_teid, enb_ip, sgw_ip, self._ENCAP_PORT)
-
-    #downlink_flow_gtp = 'in_port=%d,priority=2,eth_type=%s,actions=output:%s' %\
-    #(self._ENCAP_PORT, self._IP_TYPE, self.enb_inf)
 
     #1
     match = []
     match.append(self.parser.OFPMatch(in_port=self.offload_inf,eth_type=self._IP_TYPE, ipv4_dst=enb_location_ip))
     actions = []
-   	#actions.append(self.parser.OFPActionSetField(dl_dst=self._enb_net_d_mac,dl_src=self._sgw_net_d_mme_mac,tunnel_id=enb_teid,tun_dst=enb_ip,tun_src=sgw_ip)
-    #actions.append(self.parser.OFPActionSetField(tunnel_id=enb_teid,tun_dst=enb_ip,tun_src=sgw_ip))
     actions.append(self.parser.OFPActionSetField(eth_dst=self._enb_net_d_mac))
     actions.append(self.parser.OFPActionSetField(eth_src=self._sgw_net_d_mme_mac))
     actions.append(self.parser.OFPActionSetField(ipv4_dst=ue_ip))

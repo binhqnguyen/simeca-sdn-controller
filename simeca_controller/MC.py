@@ -1,17 +1,16 @@
-# Copyright (C) 2011 Nippon Telegraph and Telephone Corporation.
+#Copyright Binh Nguyen University of Utah (binh@cs.utah.edu)
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-# implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
 
 from ryu.base import app_manager
 from ryu.controller import ofp_event
@@ -61,7 +60,6 @@ class SMORE_controller(app_manager.RyuApp):
     XML = "/opt/simeca/xml"
     XML_TEMPLATE = "%s/input-template-penb.xml" % (XML)
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
-    #OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
     _LISTEN_INF = "eth2" #Todo: should be SGW's net_d interface
     ev = None
     bridge = "tcp:127.0.0.1"
@@ -118,12 +116,8 @@ class SMORE_controller(app_manager.RyuApp):
         
         access_switch_name = access_switch_ulr.split('.')[0]
         access_num = access_switch_ulr.split('.')[0][6:]
-        #print "accnum=%s"%access_num
-        #regex = r"net-d-enb" + access_num + r" -> (.*) -> (.*) -> (.*)"
         logical_to_mac["net-d-enb"] = ":".join(re.findall(r'.{1,2}',re.search(r"net-d-enb" + access_num + r" -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(3)))
         logical_to_mac["offload"] = ":".join(re.findall(r'.{1,2}',re.search(r'offload -> (.*) -> (.*) -> (.*)',physical_logical_inf_map).group(3)))
-        #print "Logical interfaces to MAC mapping:"
-        #print "net-d -> %s\nnet-d-mme -> %s\noffload -> %s\n" % (self._logical_to_mac["net-d"], self._logical_to_mac["net-d-mme"], self._logical_to_mac["offload"])
         
         '''
         Retrieve port number for the logical interfaces using MAC address. 
@@ -133,7 +127,6 @@ class SMORE_controller(app_manager.RyuApp):
         port_desc = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && sudo ./ovs_port_desc.sh"' % (access_switch_ulr, self._SCRIPTS)], shell=True)
         info["net-d"] = int(re.search(r'(.*)\((.*)\): addr:%s'%logical_to_mac["net-d"],port_desc).group(1))
         self._LISTEN_INF = re.search(r'(.*)\((.*)\): addr:%s'%logical_to_mac["net-d"],port_desc).group(2)
-        #self._info["net-d"] = re.search(r'(.*)\((.*): addr:%s'%self._logical_to_mac["net-d"],port_desc).group(1)
         info["net-d-enb"] = int(re.search(r'(.*)\((.*): addr:%s'%logical_to_mac["net-d-enb"],port_desc).group(1))
         info["offload"] = int(re.search(r'(.*)\((.*): addr:%s'%logical_to_mac["offload"],port_desc).group(1))
 
@@ -149,17 +142,12 @@ class SMORE_controller(app_manager.RyuApp):
         info["net-d-enb-mac"] = logical_to_mac["net-d-enb"]
 
         self.access_switches[access_switch_name] = info
-        #print "Access %s ..." % access_switch_name
-        #print self.access_switches[access_switch_name]
 
     def _get_port_interface_map_tor_switch(self, tor_switch_ulr):
         logical_to_mac = {}
         physical_logical_inf_map = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && ./get_interface_map.pl"'% (tor_switch_ulr, self._SCRIPTS)], shell=True)
         logical_to_mac['offload'] = ":".join(re.findall(r'.{1,2}',re.search(r'offload -> (.*) -> (.*) -> (.*)',physical_logical_inf_map).group(3)))
         logical_to_mac['net-tor21'] = ":".join(re.findall(r'.{1,2}',re.search(r"net-tor21 -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(3)))
-        #logical_to_mac['net-tor22'] = ":".join(re.findall(r'.{1,2}',re.search(r'net-tor22 -> (.*) -> (.*) -> (.*)',physical_logical_inf_map).group(3)))
-        #print "Logical interfaces to MAC mapping:"
-        #print "net-d -> %s\nnet-d-mme -> %s\noffload -> %s\n" % (self._logical_to_mac["net-d"], self._logical_to_mac["net-d-mme"], self._logical_to_mac["offload"])
         
         '''
         Retrieve port number for the logical interfaces using MAC address. 
@@ -168,12 +156,9 @@ class SMORE_controller(app_manager.RyuApp):
         logical_to_portnumber = {}
         port_desc = subprocess.check_output(['ssh -o StrictHostKeyChecking=no %s "cd %s && sudo ./ovs_port_desc.sh"' % (tor_switch_ulr, self._SCRIPTS)], shell=True)
         logical_to_portnumber["net-tor21"] = int(re.search(r'(.*)\((.*): addr:%s'%logical_to_mac["net-tor21"],port_desc).group(1))
-        #logical_to_portnumber["net-tor22"] = int(re.search(r'(.*)\((.*): addr:%s'%logical_to_mac["net-tor22"],port_desc).group(1))
         logical_to_portnumber["offload"] = int(re.search(r'(.*)\((.*): addr:%s'%logical_to_mac["offload"],port_desc).group(1))
         
         self.tor_switch = logical_to_portnumber
-        #print "Tor ..."
-        #print self.tor_switch
 
     def _get_port_interface_map_hsw_switch(self, hsw_switch_ulr):
         logical_to_mac = {}
@@ -197,8 +182,6 @@ class SMORE_controller(app_manager.RyuApp):
         logical_to_portnumber["net-server"] = int(re.search(r'(.*)\((.*): addr:%s'%logical_to_mac["net-server"],port_desc).group(1))
         
         self.hsw_switches[hsw_switch_name] = logical_to_portnumber
-        #print "hsw switch %s ..." % (hsw_switch_name)
-        #print self.hsw_switches[hsw_switch_name]
 
     def _get_server_info(self, server_ulr):
         info = {}
@@ -209,14 +192,10 @@ class SMORE_controller(app_manager.RyuApp):
 	except:
 		server_num = "1"
 
-	#print server_num
         info['net-server-mac'] = ":".join(re.findall(r'.{1,2}',re.search(r"net-server" + server_num + r" -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(3)))
-	print physical_logical_inf_map
-        #info['net-server-mac'] = ":".join(re.findall(r'.{1,2}',re.search(r"net-server -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(3)))
+	#print physical_logical_inf_map
         info['net-server-inf'] = re.search(r"net-server" + server_num + r" -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(1)
-        #info['net-server-inf'] = re.search(r"net-server -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(1)
         info['ip'] = re.search(r"net-server" + server_num + r" -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(2)
-        #info['ip'] = re.search(r"net-server -> (.*) -> (.*) -> (.*)",physical_logical_inf_map).group(2)
         self.servers[server_name] = info
      
     def _get_interface_to_portnumber(self):
@@ -228,8 +207,6 @@ class SMORE_controller(app_manager.RyuApp):
         for lan in ["net-tor2", "net-server"]:
             for hsw in self.hsw_switches:
                 self.interface_to_portnumber["%s-%s"%(hsw,lan)] = self.hsw_switches[hsw][lan]
-        #print "Interface name to portnumber ..."
-        #print self.interface_to_portnumber
 
     def _hex_to_int(self, str):
         try:
@@ -258,12 +235,8 @@ class SMORE_controller(app_manager.RyuApp):
             name = child.find('name').text
             dpid = child.find('dpid').text
             name_to_olddpid[name] = dpid
-        #print "Olddpid ..."
-        #print name_to_olddpid
         for name in name_to_olddpid:
             name_to_newdpid[name] = self.switchname_to_dpid[name]
-        #print "Newdpid ..."
-        #print name_to_newdpid
 
         #replace dpid
         for name in name_to_olddpid:
@@ -283,11 +256,6 @@ class SMORE_controller(app_manager.RyuApp):
         self.G=nx.DiGraph()
         self.domain = subprocess.check_output(["hostname | sed s/`hostname -s`.//"], shell=True).rstrip()
 
-        #self.switches = kwargs['switches']
-        #print "DPSET= %s" % self.dpset
-        #print "Init..."
-        ##self.dpset = Dpset()
-        #print self.dpset
                 
         #Get switch dpid
         self._get_switchname_dpid()
@@ -296,54 +264,33 @@ class SMORE_controller(app_manager.RyuApp):
         self._get_port_interface_map_access_switch("access1.%s"% self.domain)
         self._get_port_interface_map_access_switch("access2.%s"%self.domain)
         self._get_port_interface_map_access_switch("access3.%s"%self.domain)
-        #self._get_port_interface_map_access_switch("access4.%s"%self.domain)
-        #self._get_port_interface_map_hsw_switch("hsw1.%s"%self.domain)
-        #self._get_port_interface_map_hsw_switch("hsw2.%s"%self.domain)
         self._get_port_interface_map_hsw_switch("hsw1.%s"%self.domain)
         self._get_port_interface_map_tor_switch("tor.%s"%self.domain)
-        #self._get_server_info("server1.%s"%self.domain)
-        #self._get_server_info("server2.%s"%self.domain)
         self._get_server_info("server1.%s"%self.domain)
         self._get_interface_to_portnumber()
         #Construct an xml file describing the network.
         self._write_dpid_to_xml("input.xml")
 
-        #sys.exit(0)
         self.enb1_port = int(self.access_switches['access1']['net-d-enb'])
         self.enb2_port =int(self.access_switches['access2']['net-d-enb'])
         self.sgw_port = int(self.access_switches['access1']['net-d'])
         self.offload_port = int(self.access_switches['access1']['offload'])
         self.gtp_port = int(self.access_switches['access1']['gtp'])
 
-        #print "%d %d %d %d %d" % (self.enb1_port, self.enb2_port, self.sgw_port, self.offload_port, self.gtp_port)
-        #self.enb1_port = int(self._logical_to_portnumber["net-d-enb1"])
-        #self.enb2_port = int(self._logical_to_portnumber["net-d-enb2"])
-        #self.sgw_port = int(self._logical_to_portnumber["net-d"])
-        #self.offload_port = int(self._logical_to_portnumber["offload"])
-        #self.gtp_port = int(self._logical_to_portnumber["gtp"])
 
         self._LISTEN_INF = re.search(r'net-d -> (.*) -> (.*) ->',subprocess.check_output(['cd %s && ./get_interface_map.pl' % (self._SCRIPTS)], shell=True)).group(1)
 
-        #print "SMORE monitor listening to interface %s of ovs node ..." % self._LISTEN_INF
         
 
     @set_ev_cls(event.EventSwitchEnter)
     def get_topology_data(self, ev):
         LOG.debug("In get_topology...")
         switch_list = get_switch(self.topology_api_app, None)
-        #print "Switch list ... "
-        #print [switch.hardware for switch in switch_list]
         switches=[switch.dp.id for switch in switch_list]
         links_list = get_link(self.topology_api_app, None)
-        #print links_list
         links=[(link.src.dpid,link.dst.dpid,{'port':link.src.port_no}) for link in links_list]
-        #print links
         self.G.add_nodes_from(switches)
         self.G.add_edges_from(links)
-        #print "Discovered graphs:"
-        #print self.G.nodes()
-        #print self.G.edges(data=True)
-        #print "Switch 17779081116 = %s" % self.dpset.get(17779081116)
         
 
     def __del__(self):
@@ -354,47 +301,27 @@ class SMORE_controller(app_manager.RyuApp):
         
         sniffer = Sniffer(dpset, access_switches, tor_switch, hsw_switches, listen_inf)
         sniffer.start_sniffing(listen_inf)
-        #print "start thread sniffer %s"%listen_inf 
 
     def _start_sniffer_now(self, dpset, switchname_to_dpid, enb1_port, enb2_port, sgw_port, offload_port, gtp_port, listen_inf, access_switches, servers, hsw_switches):
         print "start sniffer in SMORE_controller\n"
         
-        #sniffer = Sniffer(dpset, switchname_to_dpid, enb1_port, enb2_port, sgw_port, offload_port, gtp_port, listen_inf, access_switches, servers, hsw_switches)
-        #sniffer.start_sniffing(listen_inf)
 
 
     
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
-        #self.dpset.add(Dp(ev.msg.datapath_id, ev.msg.datapath, ev.msg.datapath.ofproto, ev.msg.datapath.ofproto_parser))
-        #print "Collected switches len = %s" % self.dpset.dpset
         LOG.info("Collecting switches list: %s" % self.dpset.get_all())
         LOG.info("Waiting for %d switches..." % (len(self.switch_names)-len(self.dpset.get_all())))
 
-        #RestIoTApi(dpset=self.dpset, wsgi=self.wsgi, switchname_to_dpid=self.switchname_to_dpid, enb_inf=self.enb1_port, enb2_inf=self.enb2_port,sgw_inf=self.sgw_port, offload_inf=self.offload_port,gtp_inf=self.gtp_port, listen_inf=self._LISTEN_INF,access_switches=self.access_switches,servers=self.servers, hsw_switches=self.hsw_switches);
-        #print "DPSET = %s" % self.dpset.get_all_dpid()
-        #if (len(self.dpset.get_all_dpid()) == len(self.switch_names)):
-        #RestIoTApi(dpset=self.dpset, wsgi=self.wsgi, switchname_to_dpid=self.switchname_to_dpid, enb_inf=self.enb1_port, enb2_inf=self.enb2_port,sgw_inf=self.sgw_port, offload_inf=self.offload_port,gtp_inf=self.gtp_port, listen_inf=self._LISTEN_INF,access_switches=self.access_switches,servers=self.servers, hsw_switches=self.hsw_switches);
         if (len(self.dpset.get_all()) == len(self.switch_names)-1):
             try:
                 LOG.info("START RestIoTApi LISTENER ...")
-                #LOG.debug("Access switches: %s" % self.access_switches)
                 RestIoTApi(dpset=self.dpset, wsgi=self.wsgi, switchname_to_dpid=self.switchname_to_dpid, enb_inf=self.enb1_port, enb2_inf=self.enb2_port,sgw_inf=self.sgw_port, offload_inf=self.offload_port,gtp_inf=self.gtp_port, listen_inf=self._LISTEN_INF,access_switches=self.access_switches,servers=self.servers, hsw_switches=self.hsw_switches);
-                #print "Starting Sniffer ... on interface %s" %self._LISTEN_INF
-                #thread.start_new_thread( self._start_sniffer_now, (self.dpset,self.switchname_to_dpid, self.enb1_port, self.enb2_port,self.sgw_port, self.offload_port,self.gtp_port, self._LISTEN_INF, self.access_switches, self.servers, self.hsw_switches,) )
-                #thread.start_new_thread( self._start_sniffer, (self.dpset, self.switchname_to_dpid, self.access_switches, self.tor_switch, self.hsw_switches, self._LISTEN_INF) )
             except Exception, e:
 		print e
                 print "Error: unable to start sniffer"
 
-        #sniffer = Sniffer(self.bridge, self.ovs_ip, self.enb_port, self.sgw_port, self.offload_port,ev)
-        #sniffer.start_sniffing(self._LISTEN_INF)
-
-    #@set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
-    #def _packet_in_handler(self, ev):
-        #print "packet in"
-        #print ""
 
 
 if __name__ == "__main__":

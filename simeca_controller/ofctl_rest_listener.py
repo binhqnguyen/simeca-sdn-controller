@@ -1,18 +1,16 @@
-# Copyright (C) 2012 Nippon Telegraph and Telephone Corporation.
+#Copyright Binh Nguyen University of Utah (binh@cs.utah.edu)
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-# implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
 import logging
 
 import json
@@ -185,7 +183,6 @@ class RestIoTApi(app_manager.RyuApp):
         Dispatcher.netd_port = kwargs['sgw_inf']
         Dispatcher.offload_inf = kwargs['offload_inf']
         Dispatcher.dpset = kwargs['dpset']
-        #Dispatcher.servers = kwargs['servers']
         
         
         Dispatcher.get_enb_location_ip_map('%s/ENB.data' % self._CONF)
@@ -198,8 +195,6 @@ class RestIoTApi(app_manager.RyuApp):
         Dispatcher.locationrouting = LocationRouting(Dispatcher.dpset, Dispatcher.access_switches, Dispatcher.switchname_to_dpid) 
         Dispatcher.access_switch_gtp = AccessSwitchGtp(Dispatcher.dpset, Dispatcher.switchname_to_dpid, Dispatcher.access_switches)
         
-        #Dispatcher.attached_ue_ip = open('../iot-controller-eval/e2e_delay_exp/ATTACHED_IP.data','w',0)
-        #Dispatcher.p2p_existed_ip = open('../iot-controller-eval/e2e_delay_exp/P2P_IP.data','w',0)
         
         Dispatcher.get_imsi_server_name_map('%s/IMSI_1.data' % (self.DATA))
         Dispatcher.get_imsi_server_name_map('%s/IMSI_2.data' % (self.DATA))
@@ -212,26 +207,16 @@ class RestIoTApi(app_manager.RyuApp):
         Dispatcher.imsi_to_ip = open ('/tmp/IMSI_IP.log', 'w', 0)
         Dispatcher.imsi_to_ip = open ('/tmp/IMSI_IP.log', 'a', 0)
 
-        #test
-        #for i in range(1,300):
-        #    Dispatcher._allocate_ipv4('0011040')
 
-        ##Dispatcher._get_MACs()
         Dispatcher.set_default_route_servers()
-        #Dispatcher.build_database()
         Dispatcher.del_flows_ryu()
         Dispatcher.push_arp_server()
         #Install prefix shortespath route in SDN core
         Dispatcher.installCoreRoute()
 
         if ENABLE_OVS_GTP==0:
-            #Dispatcher.push_arp_as()
-            #Dispatcher.set_static_arp_enb()
-            #Dispatcher.set_static_ip_route_enb() #for c2s to work.
             LOG.info("")
         Dispatcher.access_switch_gtp.push_flows_bridging_ryu()
-        #for enb_cellid in Dispatcher.enb_location_ip_map:
-        #    Dispatcher._set_default_route_enb_prefix('192.190.0.0/16', enb_cellid)
         LOG.info ("-----------IoT listener/dispatcher init DONE: Listening for commands ....---------")
      
 

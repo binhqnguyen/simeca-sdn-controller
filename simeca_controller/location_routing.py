@@ -1,3 +1,17 @@
+#Copyright Binh Nguyen University of Utah (binh@cs.utah.edu)
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import logging
 
 import json
@@ -70,7 +84,6 @@ class LocationRouting:
     def _getShortestPath(self, src_dpid, dst_dpid):
         if (nx.has_path(self.G, src_dpid, dst_dpid)) == True:
             path = nx.shortest_path(self.G, src_dpid, dst_dpid)
-                    #path = nx.all_simple_paths(self.G, src_dpid_pd, dst_dpid_pd)
             index = 0
             adjusted_path = []
             for n in path:
@@ -130,7 +143,6 @@ class LocationRouting:
         of = dp.ofproto
         ofp = dp.ofproto_parser
         net_d = self.access_switches[src_enb_switch_name]['net-d']
-        #net_d_enb = self.access_switches[target_enb_switch_name]['net-d-enb']
 
 
         print "Installing Triangle flow on AS switch %s: from %s to target %s" % (src_enb_switch_dpid, src_enb_location_ip, target_enb_location_ip)
@@ -147,7 +159,6 @@ class LocationRouting:
         
         #modify old flow
         self.mod_flow(dp,command=of.OFPFC_ADD,match=match, actions=actions,priority=priority)
-        #self.mod_flow(dp, command=of.OFPFC_MODIFY_STRICT, match=match, actions=actions, priority=4) #higher priority than the subnet match
 
 
         return True
@@ -164,7 +175,6 @@ class LocationRouting:
         ofp = dp.ofproto_parser
         net_d_enb = self.access_switches[enb3_as_switch_name]['net-d-enb']
         offload = self.access_switches[enb3_as_switch_name]['offload']
-        #net_d_enb = self.access_switches[target_enb_switch_name]['net-d-enb']
 
 
         LOG.info("Modify flows on \"enb3\" for P2P HO dst_ip=%s -> dst_ip=%s" % (src_enb_location_ip, target_enb_location_ip))
@@ -189,14 +199,9 @@ class LocationRouting:
         match = ofp.OFPMatch(eth_type=ether.ETH_TYPE_IP, ipv4_dst=(destination, netmask))
 
         action = [ofp.OFPActionOutput(outport)]
-        #LOG.info("match %s", match)
-        #LOG.info("action %s", action)
         self.mod_flow(dp, command=of.OFPFC_ADD, match=match, actions=action, priority=priority)
         return True
 
-    #def installServerswitchDownlinkFlow(self, dp, outport, enb_destination):
-    #    LOG.info("installing server switch downlink flow")
-    #    return self.installIntermediaryFlow(dp, outport, enb_destination):
         
 
     def installAccessUplinkFlow(self, dp, server_destination, ue_ip, enb_location_ip, gtp_decap_port, outport, is_destination_enb=0, target_enb_location_ip="0", is_modify=0, server_mac="0", old_dst_enB_location_ip="0"):
@@ -212,20 +217,16 @@ class LocationRouting:
             actions = []
 
             match = ofp.OFPMatch(in_port=gtp_decap_port, eth_type=ether.ETH_TYPE_IP,ipv4_dst=server_destination, ipv4_src=ue_ip)
-            #match = ofp.OFPMatch(in_port=gtp_decap_port, ipv4_dst=server_destination, ipv4_src=ue_ip)
             #!!! Extra for P2P
             if is_destination_enb == 1:
                 if target_enb_location_ip != "0": #need to translate pkt's destination ip to target enb's enb_location_ip
                     actions.append(ofp.OFPActionSetField(ipv4_dst=target_enb_location_ip))
-                    #old_actions.append(ofp.OFPActionSetField(ipv4_dst=old_dst_enb_location_ip))
                 else:
                     print "WARNING: Can't translate destination ue's IP to destination enb's location IP!"
 
             actions.append(ofp.OFPActionSetField(ipv4_src=enb_location_ip))
             old_actions.append(ofp.OFPActionSetField(ipv4_src=enb_location_ip))
 
-            #LOG.debug("server_mac=%s", server_mac)
-            #LOG.info("Match: in_port=%s, eth_type=%s, ipv4_dst=%s, ipv4_src=%s" % (gtp_decap_port, ether.ETH_TYPE_IP))
             LOG.debug("Match: %s", match)
             LOG.debug("march_dst = %s, change to = %s\n"%( server_destination,target_enb_location_ip))
             if server_mac != "0":
@@ -235,8 +236,6 @@ class LocationRouting:
             actions.append(ofp.OFPActionOutput(outport)) #working
             old_actions.append(ofp.OFPActionOutput(outport)) #working
             
-            #print "actions: %s", str(actions)
-            #print "match: %s", str(match)
             
             priority = 3
             if is_destination_enb == 1:
@@ -278,8 +277,6 @@ class LocationRouting:
             actions.append(ofp.OFPActionSetField(ipv4_dst=ue_ip))
             actions.append(ofp.OFPActionOutput(to_gtp_encap_port)) #working
             
-            #print "actions: %s", str(actions)
-            #print "match: %s", str(match)
 
             self.mod_flow(dp,command=of.OFPFC_ADD,match=match, actions=actions, priority=priority)
             return True
@@ -289,8 +286,6 @@ class LocationRouting:
     Done before hand ONCE or when a new prefix is added to BS.
     '''
     def installCoreRoute(self, src_enb_ip, src_enb_netmask, dst_ip, dst_ip_netmask, src_access_dpid, dst_switch_dpid, is_destination_enb=0):
-        #LOG.debug("Installing ue_ip = %s enb_location_ip %s on data path (from %s, to %s). Match dst_ip = %s", ue_ip, enb_location_ip, access_dpid, server_switch_dpid, server_ip)
-        #print "Installing ue_ip = %s enb_location_ip %s on data path (from %s, to %s). Match dst_ip = %s"%(ue_ip, enb_location_ip, access_dpid, server_switch_dpid, server_ip)
 
         if self.G.has_node(src_access_dpid) is False:
             print "src %s dpid is not in graph!" % src_access_dpid
@@ -304,7 +299,6 @@ class LocationRouting:
         shortestPath = self._getShortestPath(src_access_dpid, dst_switch_dpid)
 
 
-        #LOG.debug("Shortest path from %s to %s is %s" % (access_dpid, server_switch_dpid, shortestPath))
         LOG.debug("Shortest path from %s to %s is %s" % (src_access_dpid, dst_switch_dpid, shortestPath))
         index = 0 
 
@@ -362,10 +356,7 @@ class LocationRouting:
         Instead, when "uplink" pkts from src eNB arrive at dst eNB, the normal "downlink" flows - which are installed when UE first attached - will 
         handle the translation from dst_ip to ue's IP.
     '''
-    #def installLocationRoute(self, ue_ip, server_ip, access_dpid, server_switch_dpid, enb_location_ip, netmask, is_destination_enb = 0, target_enb_location_ip = "", server_mac="0", enb_mac="0"):
     def installLocationRoute(self, ue_ip, dst_ip, src_access_dpid, dst_switch_dpid, src_enb_location_ip, src_enb_netmask, is_destination_enb = 0, dst_enb_location_ip = "", server_mac="0", src_enb_mac="0"):
-        #LOG.debug("Installing ue_ip = %s enb_location_ip %s on data path (from %s, to %s). Match dst_ip = %s", ue_ip, enb_location_ip, access_dpid, server_switch_dpid, server_ip)
-        #print "Installing ue_ip = %s enb_location_ip %s on data path (from %s, to %s). Match dst_ip = %s"%(ue_ip, enb_location_ip, access_dpid, server_switch_dpid, server_ip)
 
         if self.G.has_node(src_access_dpid) is False:
             print "src %s dpid is not in graph!" % src_access_dpid
@@ -379,7 +370,6 @@ class LocationRouting:
         shortestPath = self._getShortestPath(src_access_dpid, dst_switch_dpid)
 
 
-        #LOG.debug("Shortest path from %s to %s is %s" % (access_dpid, server_switch_dpid, shortestPath))
         LOG.debug("Shortest path from %s to %s is %s" % (src_access_dpid, dst_switch_dpid, shortestPath))
 
         index = 0 
@@ -387,8 +377,6 @@ class LocationRouting:
         for src,dst in shortestPath:
             if index == 0: #access switch
                 ids_port = self.G.edge[src][dst]['port']
-                #LOG.debug("Access switch: Index %d, node %s, to port:%d" ,
-                #        index, src, ids_port)
                 dp, of, ofp = self._get_dp_from_dpid(int(src))        
                 access_switch_name = ''
                 for switch_name in self.switchname_to_dpid:
@@ -446,7 +434,6 @@ class LocationRouting:
     def mod_flow(self, datapath, command, match, actions, priority=3):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-        #priority = 3
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                                actions)]
         if command is None:
@@ -457,11 +444,9 @@ class LocationRouting:
                 mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
                                   match=m, instructions=inst, command=command)
                 datapath.send_msg(mod)
-                #print "sent match=%s, instruction=%s, to datapath=%s"%(match, actions, datapath)
         else:
             mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
                                   match=match, instructions=inst, command=command)
-            #print "sent match=%s, instruction=%s, to datapath=%s"%(match, actions, datapath)
             datapath.send_msg(mod)
 
     def remove_match_flows(self, datapath, match, instructions):
@@ -519,27 +504,23 @@ class LocationRouting:
 
     def createNetworkGraph(self, **kwargs):
         self.G=nx.DiGraph()
-        #print "adding switches and hosts"
         tree = ET.parse('%s/input.xml'% self.XML) #hardcoding file name for now
         xmlroot = tree.getroot()
 
         for child in xmlroot.findall('switch'):
             switch = child.find('dpid').text
-            #print switch
             self.G.add_node(switch)
 
         for child in xmlroot.findall('links'):
             src = child.find('src').text
             dst = child.find('dst').text
             port = child.find('port').text
-            #vlan = child.find('emulabvlan').text
             self.G.add_edge(src, dst, port=int(port))
 
         for child in xmlroot.findall('host'):
             host_mac = child.find('mac').text
             switch = child.find('switch').text
             port = child.find('port').text
-            #vlan = child.find('emulabvlan').text
             self.G.add_node(host_mac)
             self.G.add_edge(switch,host_mac,port=int(port))
             self.G.add_edge(host_mac,switch,port=1) #always host port 1 is connected to the switch
