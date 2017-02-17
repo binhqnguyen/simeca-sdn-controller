@@ -17,6 +17,7 @@ import logging
 
 import json
 import ast
+import os
 from webob import Response
 
 from ryu.base import app_manager
@@ -65,9 +66,9 @@ supported_ofctl = {
 
 
 class RestIoTApi(app_manager.RyuApp):
-    SIMECA = "/opt/OpenEPC/bin"
+    SIMECA = "/opt/"
     _SCRIPTS = "%s/simeca" % SIMECA
-    DATA="%s/simeca/data" % SIMECA
+    DATA="%s/data" % (os.environ['HOME'])
     _CONF = "%s/simeca/CONF" % SIMECA
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION,
                     ofproto_v1_2.OFP_VERSION,
@@ -189,9 +190,9 @@ class RestIoTApi(app_manager.RyuApp):
         
         Dispatcher.get_enb_location_ip_map('%s/ENB.data' % self._CONF)
         Dispatcher.ue_to_p2p_destinations = {}
-        Dispatcher.get_p2p_attach_destination('%s/P2P_ATTACH.data' % self._CONF)
+        Dispatcher.get_p2p_attach_destination('%s/P2P_ATTACH.data' % self.DATA)
         #LOG.debug(Dispatcher.enb_location_ip_map)
-        Dispatcher.get_imsi_server_name_map('%s/SERVER.data' % self._CONF)
+        Dispatcher.get_imsi_server_name_map('%s/SERVER.data' % self.DATA)
         LOG.debug("Imsi-server map:" % Dispatcher.imsi_server_name_map)
         #LOG.debug("Access switches %s" % Dispatcher.access_switches)
         Dispatcher.locationrouting = LocationRouting(Dispatcher.dpset, Dispatcher.access_switches, Dispatcher.switchname_to_dpid) 

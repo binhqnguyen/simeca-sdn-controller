@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../simeca_constants.sh
+source /opt/simeca/simeca_constants.sh
 
 if [ $(whoami) != "root" ]; then
 		echo "This must be run as root"
@@ -11,26 +11,10 @@ cd $EPC
 sudo /opt/OpenEPC/bin/mm.kill.sh
 
 
+#imsi="001011234567890"
+#client_name=$(hostname | cut -d"." -f1)
 imsi="001011234567890"
-client_name=$(hostname | cut -d"." -f1)
-case $client_name in
-    alice)
-        imsi="001011234567890"
-        c_name="Alice"
-        ;;
-    bob)
-        imsi="001011234567891"
-        c_name="Bob"
-        ;;
-    charlie)
-        imsi="001011234567892"
-        c_name="Charlie"
-        ;;
-
-    *)
-        echo "Client name unknown!"
-        ;;
-esac
+c_name="Alice"
 
 sudo cp $XML/mm.xml /opt/OpenEPC/etc/
 sudo cp $XML/mm_network.xml /opt/OpenEPC/etc/

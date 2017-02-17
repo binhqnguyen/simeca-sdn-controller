@@ -13,5 +13,5 @@ bash $EPC/restart_epc.sh
 
 echo "==========Starting MC .... ============"
 cd $MC_PATH
-ps ax | grep MC | awk '{system("sudo kill "$1)}'
+#ps ax | grep MC | awk '{system("sudo kill "$1)}'
 ryu-manager MC.py

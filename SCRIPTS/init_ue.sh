@@ -13,6 +13,6 @@ sudo sed -i "s/UE_ID=.*/UE_ID=\"$UE_ID\"/g" $SIMECA_PATH/simeca_constants.sh || 
 	exit 1
 }
 
-sudo touch /var/log/UE_INITED
+touch /tmp/UE_INITED
 
 exit 0
