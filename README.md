@@ -1,4 +1,4 @@
-Copyright Binh Nguyen - University of Utah (binh@cs.utah.edu), and Nokia Bell Labs.
+Copyright University of Utah, and Nokia Bell Labs.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,18 +13,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
+Overview:
+=========
+This is SIMECA's SDN controllers source code and scripts to run SIMECA in PhantomNet
+* Tutorial link: `https://wiki.phantomnet.org/wiki/phantomnet/simeca-sdn-based-iot-mobile-edge-cloud-architecture`
+Contact: `binh@cs.utah.edu`
 
-===============================================================================================
-This is SIMECA's SDN controllers source code 
-and scripts to run SIMECA in PhantomNet
-(https://wiki.phantomnet.org/wiki/phantomnet/simeca-sdn-based-iot-mobile-edge-cloud-architecture).
-Modified SIMECA's Mobility Function component is not opensource as it is built based on OpenEPC.
-================================================================================================
+Usage:
+=====
+* ALl detail instructions could be found here: `https://wiki.phantomnet.org/wiki/phantomnet/simeca-sdn-based-iot-mobile-edge-cloud-architecture`
 
 
-1. For more information, please refer to : https://wiki.phantomnet.org/wiki/phantomnet/simeca-sdn-based-iot-mobile-edge-cloud-architecture
+Note:
+====
+* SIMECA requires a modified OpenEPC's MME component, which is not opensource. Please contact [PhantomNet](https://phantomnet.org/) if you are interested in running SIMECA end-to-end.
 
-2. Folders:
+
+Folders:
+=======
 	= CONF: configuration files for SIMECA.
 	= SCRIPTS: scripts to boostrap SIMECA controllers and SIMECA's OVS.
 	= epc: scripts to configure and start SIMECA Mobility Functions (MF) and OpenEPC components (eNodeB, UE).
@@ -34,4 +40,3 @@ Modified SIMECA's Mobility Function component is not opensource as it is built b
 	= start_scripts: scripts to configure and start OVS in SIMECA.
 	= XML: xml file storing SIMECA network topology and computing shortest path forwarding.
 	= simeca_constants.sh: constants used in SIMECA.
-3. If you have questions, contact: binh <something missing> cs.utah.edu 
